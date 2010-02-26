@@ -1,0 +1,19 @@
+Name:                has
+Version:             0.1
+Synopsis:            Small Explicit Generics
+Homepage:            not yet
+License:             BSD3
+License-file:        LICENSE
+Author:              Yusaku Hashimoto
+Maintainer:          Yusaku Hashimoto<nonowarn@gmail.com>
+Copyright:           (c) Yusaku Hashimoto 2010
+Stability:           Experimental
+Category:            Data
+Build-type:          Simple
+Cabal-version:       >=1.2
+
+Library
+  Hs-source-dirs:    src
+  Build-depends:     base==4.*
+
+  Exposed-modules:   Data.Has
