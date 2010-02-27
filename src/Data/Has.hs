@@ -25,7 +25,3 @@ instance Has e (e :*: r) where
 instance Has e r => Has e (b :*: r) where
     inj t (b :*: r) e = b :*: inj t r e
     prj t (b :*: r)   = prj t r
-
-instance Has e e where
-    inj _ _ e = e
-    prj _ e   = e

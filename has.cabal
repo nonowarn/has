@@ -9,7 +9,7 @@ Maintainer:          Yusaku Hashimoto<nonowarn@gmail.com>
 Copyright:           (c) Yusaku Hashimoto 2010
 Stability:           Experimental
 Category:            Data
-Build-type:          Simple
+Build-type:          Custom
 Cabal-version:       >=1.2
 
 Library
@@ -17,3 +17,14 @@ Library
   Build-depends:     base==4.*
 
   Exposed-modules:   Data.Has
+
+Flag test
+  Description:       Build test program.
+  Default:           False
+
+Executable test
+  Hs-source-dirs:    src, test
+  Main-is:           Main.hs
+  Build-depends:     HUnit, test-framework, test-framework-hunit
+  if !flag(test)
+    Buildable:       False
