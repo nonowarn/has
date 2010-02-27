@@ -9,6 +9,7 @@ import Data.Has
 main = defaultMain
        [ testGroup "Typical Usage" test_typical_usage
        , testGroup "Corner Cases"  test_corner_cases
+       , testGroup "Newtypes"      test_newtypes
        ]
 
 eq test_name expected actual =
@@ -38,5 +39,29 @@ test_corner_cases =
                (P (-1) :*: P 2 :*: P 3) (inj OfP (P 1 :*: P 2 :*: P 3) (P (-1)))
       , eq "left-most data wins in projection also"
                (P 1) (prj OfP (P 1 :*: P 2 :*: P 3))
+      ]
+    ]
+
+newtype NT = NT (P :*: Q)
+    deriving (Show,Eq,Has P,Has Q)
+newtype NT' = NT' (P :*: NT)
+    deriving (Show,Eq,Has P,Has Q)
+
+test_newtypes =
+    [ testGroup "can derive Has class with GND"
+      [ eq "it works in injection"
+               (NT $ P 4 :*: Q 2)
+               (inj OfP (NT $ P 2 :*: Q 2) (P 4))
+      , eq "it works in projection"
+               (Q 2) (prj OfQ (NT $ P 2 :*: Q 2))
+      ]
+    , testGroup "can wrapp another newtype and derive instances"
+      [ testGroup "left most type still wins"
+        [ eq "in injection"
+             (NT' $ P 10 :*: NT (P 0 :*: Q 0))
+             (inj OfP (NT' $ P 0 :*: NT (P 0 :*: Q 0)) (P 10))
+        , eq "in projection"
+             (P 10) (prj OfP (NT' $ P 10 :*: NT (P 0 :*: Q 0)))
+        ]
       ]
     ]
