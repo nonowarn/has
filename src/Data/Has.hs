@@ -5,6 +5,7 @@ module Data.Has
   ( (:*:)(..)
   , Has(..)
   , Tag
+  , upd
   ) where
 
 infixr 5 :*:
@@ -31,3 +32,6 @@ instance Has e r => Has e (b :*: r) where
 instance Has e e where
     inj _ _ e = e
     prj _ e   = e
+
+upd :: (Has e s) => Tag e -> (e -> e) -> s -> s
+upd t f s = let e = prj t s in inj t s (f e)

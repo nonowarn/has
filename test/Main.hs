@@ -31,6 +31,8 @@ test_typical_usage =
     , eq "Project by Another Tag" (P 1) (prj OfP (P 1 :*: Q 2 :*: R 3))
     , eq "Inject by Another Tag" (P 99 :*: Q 2 :*: R 3)
                                  (inj OfP (P 1 :*: Q 2 :*: R 3) (P 99))
+    , eq "Update by a Tag" (P (-1) :*: Q 2 :*: R 3)
+                           (upd OfP (\(P n) -> P (negate n)) (P 1 :*: Q 2 :*: R 3))
     ]
 
 test_corner_cases =
