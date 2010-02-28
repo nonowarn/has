@@ -5,7 +5,7 @@ Homepage:            not yet
 License:             BSD3
 License-file:        LICENSE
 Author:              Yusaku Hashimoto
-Maintainer:          Yusaku Hashimoto<nonowarn@gmail.com>
+Maintainer:          Yusaku Hashimoto <nonowarn@gmail.com>
 Copyright:           (c) Yusaku Hashimoto 2010
 Stability:           Experimental
 Category:            Data
@@ -25,6 +25,7 @@ Flag test
 Executable test
   Hs-source-dirs:    src, test
   Main-is:           Main.hs
-  Build-depends:     HUnit, test-framework, test-framework-hunit
   if !flag(test)
     Buildable:       False
+  if flag(test)
+    Build-depends:   HUnit, test-framework, test-framework-hunit
