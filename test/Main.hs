@@ -54,7 +54,7 @@ newtype NT' = NT' (P :*: NT)
 newtype NT'' = NT'' (P :*: NT')
     deriving (Show,Eq,Has P,Has Q)
 
--- If we place Q to be the right side of NT' as follows,
+-- Newtypes: If we place Q to be the right side of NT' as follows,
 --
 -- > newtype NT'' = NT'' (NT' :*: Q)
 -- >   deriving (Show,Eq,Has P,Has Q)
@@ -81,7 +81,7 @@ test_newtypes =
       , eq "it works in projection"
                (Q 2) (prj OfQ (NT $ P 2 :*: Q 2))
       ]
-    , testGroup "can wrapp another newtype and derive instances"
+    , testGroup "can wrap another newtype and derive instances"
       [ testGroup "outer-left-most type still wins"
         [ eq "in injection"
              (NT' $ P 10 :*: NT (P 0 :*: Q 0))
