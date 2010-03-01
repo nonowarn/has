@@ -6,6 +6,7 @@ module Data.Has
   , Has(..)
   , Tag
   , upd
+  , poly
   ) where
 
 infixr 5 :*:
@@ -35,3 +36,6 @@ instance Has e e where
 
 upd :: (Has e s) => Tag e -> (e -> e) -> s -> s
 upd t f s = let e = prj t s in inj t s (f e)
+
+poly :: (Has e s) => s -> e
+poly = prj undefined

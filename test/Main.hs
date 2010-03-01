@@ -10,6 +10,7 @@ main = defaultMain
        [ testGroup "Typical Usage" test_typical_usage
        , testGroup "Corner Cases"  test_corner_cases
        , testGroup "Newtypes"      test_newtypes
+       , testGroup "Poly Values"   test_poly_values
        ]
 
 eq test_name expected actual =
@@ -91,4 +92,27 @@ test_newtypes =
              (P 77) (prj OfP (NT'' $ P 77 :*: NT' (P 10 :*: NT (P 0 :*: Q 0))))
         ]
       ]
+    ]
+
+-- Poly Values: Type signiture is important here...
+--
+-- If we write
+--
+-- > intBool = 1 :*: True
+-- > v = poly intBool
+--
+-- GHC infers v's type should be (Has e Bool, Num e) => e. This might
+-- be a bug of the compiler. But if we have type signitures as
+-- follows, everything works fine.
+--
+-- > intBool :: Int :*: Bool
+-- > v :: Int
+
+test_poly_values =
+  let
+    intBool :: Int :*: Bool
+    intBool = 1 :*: True
+  in
+    [ eq "selector is determined at compile time"
+         (2::Int) (if poly intBool then poly intBool + 1 else 0)
     ]
