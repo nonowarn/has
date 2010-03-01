@@ -5,7 +5,6 @@ module Data.Has
   ( (:*:)(..)
   , Has(..)
   , upd
-  , poly
   ) where
 
 infixr 5 :*:
@@ -33,6 +32,3 @@ instance Has e e where
 
 upd :: (Has e s) => (e -> e) -> s -> s
 upd f s = let e = prj s in inj (f e) s
-
-poly :: (Has e s) => s -> e
-poly = prj
