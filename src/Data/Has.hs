@@ -4,7 +4,6 @@
 module Data.Has
   ( (:*:)(..)
   , Has(..)
-  , Tag
   , upd
   , poly
   ) where
@@ -14,28 +13,26 @@ infixr 5 :*:
 data a :*: b = a :*: b
     deriving (Eq,Ord,Show,Read,Bounded)
 
-data family Tag e
-
 class Has e s where
-    inj :: Tag e -> s -> e -> s
-    prj :: Tag e -> s -> e
+    inj :: e -> s -> s
+    prj :: s -> e
 
 instance Has e (e :*: r) where
-    inj _ (_ :*: r) e = e :*: r
-    prj _ (e :*: _)   = e
+    inj e ~(_ :*: r) = e :*: r
+    prj   ~(e :*: _) = e
 
 instance Has e r => Has e (b :*: r) where
-    inj t (b :*: r) e = b :*: inj t r e
-    prj t (b :*: r)   = prj t r
+    inj e ~(b :*: r) = b :*: inj e r
+    prj   ~(b :*: r) = prj r
 
 -- This instance is needed for last types of type lists such as T in
 -- (T1 :*: T2 :*: T3 :*: T)
 instance Has e e where
-    inj _ _ e = e
-    prj _ e   = e
+    inj e _ = e
+    prj e   = e
 
-upd :: (Has e s) => Tag e -> (e -> e) -> s -> s
-upd t f s = let e = prj t s in inj t s (f e)
+upd :: (Has e s) => (e -> e) -> s -> s
+upd f s = let e = prj s in inj (f e) s
 
 poly :: (Has e s) => s -> e
-poly = prj undefined
+poly = prj

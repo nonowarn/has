@@ -17,7 +17,6 @@ Library
   Build-depends:     base==4.*
 
   Exposed-modules:   Data.Has
-                     Data.Has.Tags
 
 Flag test
   Description:       Build test program.

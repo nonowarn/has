@@ -20,30 +20,37 @@ newtype P = P Int deriving (Eq,Show)
 newtype Q = Q Int deriving (Eq,Show)
 newtype R = R Int deriving (Eq,Show)
 
-data instance Tag P = OfP
-data instance Tag Q = OfQ
-data instance Tag R = OfR
-
 test_typical_usage =
-    [ eq "Project by Tag" (Q 2) (prj OfQ (P 1 :*: Q 2 :*: R 3))
-    , eq "Inject by Tag"  (P 1 :*: Q 10 :*: R 3)
-                          (inj OfQ (P 1 :*: Q 2 :*: R 3) (Q 10))
+    [ eq "Project by Type" (Q 2) (prj (P 1 :*: Q 2 :*: R 3))
+    , eq "Inject by Type"
+             (P 1 :*: Q 10 :*: R 3)
+             (inj (Q 10) (P 1 :*: Q 2 :*: R 3))
 
-    , eq "Project by Another Tag" (P 1) (prj OfP (P 1 :*: Q 2 :*: R 3))
-    , eq "Inject by Another Tag" (P 99 :*: Q 2 :*: R 3)
-                                 (inj OfP (P 1 :*: Q 2 :*: R 3) (P 99))
-    , eq "Update by a Tag" (P (-1) :*: Q 2 :*: R 3)
-                           (upd OfP (\(P n) -> P (negate n)) (P 1 :*: Q 2 :*: R 3))
+    , eq "Project by Another Type" (P 1) (prj (P 1 :*: Q 2 :*: R 3))
+    , eq "Inject by Another Type"
+             (P 99 :*: Q 2 :*: R 3)
+             (inj (P 99) (P 1 :*: Q 2 :*: R 3))
+
+    , eq "Update by a Type"
+             (P (-1) :*: Q 2 :*: R 3)
+             (upd (\(P n) -> P (negate n)) (P 1 :*: Q 2 :*: R 3))
+
+    , eq "Build data by inj by inj"
+             (P 1 :*: Q 2 :*: R 3)
+             (inj (P 1) . inj (R 3) . inj (Q 2) $ undefined)
     ]
 
 test_corner_cases =
     [ testGroup "If there are same types in a type list"
       [ eq "outer-left-most data wins in injection"
-               (P (-1) :*: P 2 :*: P 3) (inj OfP (P 1 :*: P 2 :*: P 3) (P (-1)))
+               (P (-1) :*: P 2 :*: P 3)
+               (inj (P (-1)) (P 1 :*: P 2 :*: P 3))
       , eq "outer-left-most data wins in projection also"
-               (P 1) (prj OfP (P 1 :*: P 2 :*: P 3))
+               (P 1)
+               (prj (P 1 :*: P 2 :*: P 3))
       , eq "even they are nested complexly"
-               (P 0) (prj OfP (P 0 :*: (P 1 :*: (P 2 :*: P 3) :*: (P 4 :*: P 5)) :*: P 6))
+               (P 0)
+               (prj (P 0 :*: (P 1 :*: (P 2 :*: P 3) :*: (P 4 :*: P 5)) :*: P 6))
       ]
     ]
 
@@ -77,19 +84,19 @@ test_newtypes =
     [ testGroup "can derive Has class with GND"
       [ eq "it works in injection"
                (NT $ P 4 :*: Q 2)
-               (inj OfP (NT $ P 2 :*: Q 2) (P 4))
+               (inj (P 4) (NT $ P 2 :*: Q 2))
       , eq "it works in projection"
-               (Q 2) (prj OfQ (NT $ P 2 :*: Q 2))
+               (Q 2) (prj (NT $ P 2 :*: Q 2))
       ]
     , testGroup "can wrap another newtype and derive instances"
       [ testGroup "outer-left-most type still wins"
         [ eq "in injection"
              (NT' $ P 10 :*: NT (P 0 :*: Q 0))
-             (inj OfP (NT' $ P 0 :*: NT (P 0 :*: Q 0)) (P 10))
+             (inj (P 10) (NT' $ P 0 :*: NT (P 0 :*: Q 0)))
         , eq "in projection"
-             (P 10) (prj OfP (NT' $ P 10 :*: NT (P 0 :*: Q 0)))
+             (P 10) (prj (NT' $ P 10 :*: NT (P 0 :*: Q 0)))
         , eq "more nestings"
-             (P 77) (prj OfP (NT'' $ P 77 :*: NT' (P 10 :*: NT (P 0 :*: Q 0))))
+             (P 77) (prj (NT'' $ P 77 :*: NT' (P 10 :*: NT (P 0 :*: Q 0))))
         ]
       ]
     ]
