@@ -37,6 +37,10 @@ test_typical_usage =
     , eq "Build data by inj by inj"
              (P 1 :*: Q 2 :*: R 3)
              (inj (P 1) . inj (R 3) . inj (Q 2) $ undefined)
+
+    , let intBool = (1::Int) :*: (2::Int) :*: True
+      in eq "prj selects a value from record with type inference"
+             (2::Int) (if prj intBool then prj intBool + 1 else -1)
     ]
 
 test_corner_cases =
