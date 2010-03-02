@@ -22,6 +22,8 @@ Library
 
   Exposed-modules:   Data.Has
 
+  Other-modules:     Data.Has.Engine
+
 Flag test
   Description:       Build test program.
   Default:           False
