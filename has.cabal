@@ -1,7 +1,7 @@
 Name:                has
 Version:             0.1
-Synopsis:            Small Explicit Generics
-Homepage:            not yet
+Synopsis:            Generic Haskell's Record Accessors
+Homepage:            http://github.com/nonowarn/has
 License:             BSD3
 License-file:        LICENSE
 Author:              Yusaku Hashimoto
