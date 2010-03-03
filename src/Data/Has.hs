@@ -1,6 +1,8 @@
 {-# OPTIONS_GHC -fglasgow-exts #-}
 {-# LANGUAGE OverlappingInstances,UndecidableInstances #-}
 
+-- | Provides some pliant data types and functions.
+
 module Data.Has
   ( (:*:)(..)
   , Has(..)
@@ -11,10 +13,14 @@ import Data.Maybe
 
 import Data.Has.Engine
 
+-- | Provides plient function. Holds @e == prj (inj e s)@ for all @s@ and @e@.
 class Has e s where
+    -- | Injects a value of type @e@ into @s@ if @s@ contains the type @e@.
     inj :: e -> s -> s
+    -- | Projects a value of type @e@ out from @s@ if @s@ contains the type @e@.
     prj :: s -> e
 
+-- | Updates a value @e@ in @s@, using given function @e -> e@.
 upd :: (Has e s) => (e -> e) -> s -> s
 upd f s = let e = prj s in inj (f e) s
 
