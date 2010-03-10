@@ -1,5 +1,5 @@
-{-# OPTIONS_GHC -fglasgow-exts #-}
-{-# LANGUAGE OverlappingInstances,UndecidableInstances #-}
+{-# OPTIONS_GHC -fglasgow-exts -fno-warn-orphans #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 -- | Provides some pliant data types and functions.
 
