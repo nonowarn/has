@@ -9,7 +9,10 @@ module Data.Has
   , upd
   ) where
 
+import Control.Applicative
 import Data.Maybe
+import Data.Monoid (Monoid (..))
+import Test.QuickCheck (Arbitrary (..), CoArbitrary (..))
 
 import Data.Has.Engine
 
@@ -27,3 +30,15 @@ upd f s = let e = prj s in inj (f e) s
 instance (MayHas e s, Contains e s TyTrue) => Has e s where
     inj e s = fromJust (inj' e s)
     prj s   = fromJust (prj' s)
+
+-- Other Instances
+
+instance (Monoid a, Monoid b) => Monoid (a :*: b) where
+    mempty = mempty :*: mempty
+    mappend ~(a :*: b) ~(a' :*: b') = mappend a a' :*: mappend b b'
+
+instance (Arbitrary a, Arbitrary b) => Arbitrary (a :*: b) where
+    arbitrary = liftA2 (:*:) arbitrary arbitrary
+
+instance (CoArbitrary a, CoArbitrary b) => CoArbitrary (a :*: b) where
+    coarbitrary ~(a :*: b) = coarbitrary a . coarbitrary b
