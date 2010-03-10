@@ -1,7 +1,9 @@
 Name:                has
-Version:             0.2
-Synopsis:            Generic Haskell's Record Accessors
-Description:         Usage: <http://github.com/nonowarn/has/blob/master/README.md>
+Version:             0.2.1
+Synopsis:            Pliant data types and functions
+Description:         In other words, weak extensible records.
+                     .
+                     Usage: <http://github.com/nonowarn/has/blob/master/README.md>
                      .
                      And its test would be helpful: <http://github.com/nonowarn/has/blob/master/test/Main.hs>
 Homepage:            http://github.com/nonowarn/has
