@@ -21,7 +21,7 @@ instance Show TyFalse where show _ = "TyFalse"
 -- | Class for trying injection and projection of values.
 --   If there are no matching types, it fails with returning Nothing.
 --   If there are many matching types, left-most type will win.
-class MayHas e s where
+class MayHave e s where
     inj' :: e -> s -> Maybe s
     prj' :: s -> Maybe e
 
@@ -40,13 +40,13 @@ class TyOr a b r | a b -> r where
   Methods in classes are not often used, but make debugging easier.
  -}
 
-instance MayHas e f where
+instance MayHave e f where
     inj' _ _ = Nothing
     prj' _   = Nothing
-instance MayHas e e where
+instance MayHave e e where
     inj' e _ = Just e
     prj' e   = Just e
-instance (MayHas e h,MayHas e t) => MayHas e (h :*: t) where
+instance (MayHave e h,MayHave e t) => MayHave e (h :*: t) where
     inj' e ~(h:*:t) = maybe (fmap (h:*:) (inj' e t)) (Just . (:*:t)) (inj' e h)
     prj'   ~(h:*:t) = maybe (prj' t)   Just (prj' h)
 

@@ -27,11 +27,11 @@ class Has e s where
 upd :: (Has e s) => (e -> e) -> s -> s
 upd f s = let e = prj s in inj (f e) s
 
-instance (MayHas e s, Contains e s TyTrue) => Has e s where
+instance (MayHave e s, Contains e s TyTrue) => Has e s where
     inj e s = fromJust (inj' e s)
     prj s   = fromJust (prj' s)
 
--- Other Instances
+-- Some orphan instances
 
 instance (Monoid a, Monoid b) => Monoid (a :*: b) where
     mempty = mempty :*: mempty
