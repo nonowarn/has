@@ -55,7 +55,17 @@ instance (CoArbitrary a, CoArbitrary b) => CoArbitrary (a :*: b) where
 
 -- | Represents labelled value
 newtype (:>) lab a = Lab { unLab :: a }
-    deriving (Show,Eq)
+    deriving (Eq,Ord,Show,Read,Bounded)
+
+instance (Monoid a) => Monoid (lab :> a) where
+    mempty = Lab mempty
+    mappend a b = Lab (unLab a `mappend` unLab b)
+
+instance (Arbitrary a) => Arbitrary (lab :> a) where
+    arbitrary = Lab <$> arbitrary
+
+instance (CoArbitrary a) => CoArbitrary (lab :> a) where
+    coarbitrary = coarbitrary . unLab
 
 -- | attaches a label
 label :: lab -> a -> lab :> a
