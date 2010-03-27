@@ -7,6 +7,11 @@ module Data.Has
   ( (:*:)(..)
   , Has(..)
   , upd
+
+  , (:>)
+  , (.>), (.<)
+  , label, unlabel
+  , injl, prjl, updl
   ) where
 
 import Control.Applicative
@@ -42,3 +47,32 @@ instance (Arbitrary a, Arbitrary b) => Arbitrary (a :*: b) where
 
 instance (CoArbitrary a, CoArbitrary b) => CoArbitrary (a :*: b) where
     coarbitrary ~(a :*: b) = coarbitrary a . coarbitrary b
+
+-- Labelled values
+
+newtype (:>) lab a = Lab { unLab :: a }
+    deriving (Show,Eq)
+
+label :: lab -> a -> lab :> a
+label _ a = Lab a
+
+unlabel :: lab -> lab :> a -> a
+unlabel _ = unLab
+
+infix 6 .>
+infix 6 .<
+
+(.>) = label
+(.<) = unlabel
+
+prjl :: (Has (lab :> b) a)
+     => lab -> a -> b
+prjl lab = unlabel lab . prj
+
+injl :: (Has (lab :> b) a)
+     => lab -> b -> a -> a
+injl lab b = inj (label lab b)
+
+updl :: (Has (lab :> b) a)
+     => lab -> (b -> b) -> (a -> a)
+updl lab f a = let b = prjl lab a in injl lab (f b) a
