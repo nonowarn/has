@@ -4,13 +4,16 @@
 -- | Provides some pliant data types and functions.
 
 module Data.Has
-  ( (:*:)(..)
+  (
+  -- * Core
+    (:*:)(..)
   , Has(..)
   , upd
 
+  -- * Working with labelled values
   , (:>)
-  , (.>), (.<)
   , label, unlabel
+  , (.>), (.<)
   , injl, prjl, updl
   ) where
 
@@ -50,32 +53,40 @@ instance (CoArbitrary a, CoArbitrary b) => CoArbitrary (a :*: b) where
 
 -- Labelled values
 
+-- | Represents labelled value
 newtype (:>) lab a = Lab { unLab :: a }
     deriving (Show,Eq)
 
+-- | attaches a label
 label :: lab -> a -> lab :> a
 label _ a = Lab a
 
+-- | detaches a label
 unlabel :: lab -> lab :> a -> a
 unlabel _ = unLab
 
--- Operator version of label/unlabel
+-- | Operator version of 'label'
 (.>) :: lab -> a -> lab :> a
-(.<) :: lab -> lab :> a -> a
 (.>) = label
+
+-- | Operator version of 'unlabel'
+(.<) :: lab -> lab :> a -> a
 (.<) = unlabel
 
 infix 6 .>
 infix 6 .<
 
+-- | Projects a labelled value
 prjl :: (Has (lab :> b) a)
      => lab -> a -> b
 prjl lab = unlabel lab . prj
 
+-- | Injects a labelled value
 injl :: (Has (lab :> b) a)
      => lab -> b -> a -> a
 injl lab b = inj (label lab b)
 
+-- | Updates a labelled value
 updl :: (Has (lab :> b) a)
      => lab -> (b -> b) -> (a -> a)
 updl lab f a = let b = prjl lab a in injl lab (f b) a
