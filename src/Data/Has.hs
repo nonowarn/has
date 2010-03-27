@@ -39,18 +39,6 @@ instance (MayHave e s, Contains e s TyTrue) => Has e s where
     inj e s = fromJust (inj' e s)
     prj s   = fromJust (prj' s)
 
--- Some orphan instances
-
-instance (Monoid a, Monoid b) => Monoid (a :*: b) where
-    mempty = mempty :*: mempty
-    mappend ~(a :*: b) ~(a' :*: b') = mappend a a' :*: mappend b b'
-
-instance (Arbitrary a, Arbitrary b) => Arbitrary (a :*: b) where
-    arbitrary = liftA2 (:*:) arbitrary arbitrary
-
-instance (CoArbitrary a, CoArbitrary b) => CoArbitrary (a :*: b) where
-    coarbitrary ~(a :*: b) = coarbitrary a . coarbitrary b
-
 -- Labelled values
 
 -- | Represents labelled value

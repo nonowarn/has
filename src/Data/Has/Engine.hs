@@ -3,11 +3,22 @@
 
 module Data.Has.Engine where
 
-infixr 5 :*:
-
 -- | Represents Type level list.
 data a :*: b = a :*: b
     deriving (Eq,Ord,Show,Read,Bounded)
+
+infixr 5 :*:
+
+instance (Monoid a, Monoid b) => Monoid (a :*: b) where
+    mempty = mempty :*: mempty
+    mappend ~(a :*: b) ~(a' :*: b') = mappend a a' :*: mappend b b'
+
+instance (Arbitrary a, Arbitrary b) => Arbitrary (a :*: b) where
+    arbitrary = liftA2 (:*:) arbitrary arbitrary
+
+instance (CoArbitrary a, CoArbitrary b) => CoArbitrary (a :*: b) where
+    coarbitrary ~(a :*: b) = coarbitrary a . coarbitrary b
+
 
 -- | Represents Type level boolean True
 data TyTrue = TyTrue
