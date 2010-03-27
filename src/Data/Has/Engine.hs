@@ -3,6 +3,10 @@
 
 module Data.Has.Engine where
 
+import Control.Applicative
+import Data.Monoid (Monoid (..))
+import Test.QuickCheck (Arbitrary (..), CoArbitrary (..))
+
 -- | Represents Type level list.
 data a :*: b = a :*: b
     deriving (Eq,Ord,Show,Read,Bounded)
