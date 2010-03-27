@@ -59,11 +59,14 @@ label _ a = Lab a
 unlabel :: lab -> lab :> a -> a
 unlabel _ = unLab
 
-infix 6 .>
-infix 6 .<
-
+-- Operator version of label/unlabel
+(.>) :: lab -> a -> lab :> a
+(.<) :: lab -> lab :> a -> a
 (.>) = label
 (.<) = unlabel
+
+infix 6 .>
+infix 6 .<
 
 prjl :: (Has (lab :> b) a)
      => lab -> a -> b
