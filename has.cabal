@@ -26,6 +26,7 @@ Library
   Exposed-modules:   Data.Has
 
   Other-modules:     Data.Has.Engine
+                     Data.Has.TypeList
 
 Flag test
   Description:       Build test program.

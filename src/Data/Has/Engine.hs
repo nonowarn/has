@@ -3,76 +3,31 @@
 
 module Data.Has.Engine where
 
-import Control.Applicative
-import Data.Monoid (Monoid (..))
-import Test.QuickCheck (Arbitrary (..), CoArbitrary (..))
+import Data.Has.TypeList
 
--- | Represents Type level list.
-data a :*: b = a :*: b
-    deriving (Eq,Ord,Show,Read,Bounded)
+type Row a = a ::: TyNil
 
-infixr 5 :*:
+row :: a -> Row a
+row a = a ::: TyNil
 
-instance (Monoid a, Monoid b) => Monoid (a :*: b) where
-    mempty = mempty :*: mempty
-    mappend ~(a :*: b) ~(a' :*: b') = mappend a a' :*: mappend b b'
+(&) :: (Append a b) => a -> b -> a :&: b
+(&) = (.++.)
+infixr 5 &
 
-instance (Arbitrary a, Arbitrary b) => Arbitrary (a :*: b) where
-    arbitrary = liftA2 (:*:) arbitrary arbitrary
+type family a :&: b
+type instance a :&: b = a :++: b
+infixr 5 :&:
 
-instance (CoArbitrary a, CoArbitrary b) => CoArbitrary (a :*: b) where
-    coarbitrary ~(a :*: b) = coarbitrary a . coarbitrary b
+-- | Provides plient function. Holds @e == prj (inj e s)@ for all @s@ and @e@.
+class Has e s where
+    -- | Injects a value of type @e@ into @s@ if @s@ contains the type @e@.
+    inj :: e -> s -> s
+    -- | Projects a value of type @e@ out from @s@ if @s@ contains the type @e@.
+    prj :: s -> e
 
-
--- | Represents Type level boolean True
-data TyTrue = TyTrue
-
--- | Represents Type level boolean False
-data TyFalse = TyFalse
-
-instance Show TyTrue where show _ = "TyTrue"
-instance Show TyFalse where show _ = "TyFalse"
-
--- | Class for trying injection and projection of values.
---   If there are no matching types, it fails with returning Nothing.
---   If there are many matching types, left-most type will win.
-class MayHave e s where
-    inj' :: e -> s -> Maybe s
-    prj' :: s -> Maybe e
-
--- | Class which predicts if type list @s@ contains @e@.
---   if @s@ contains @e@, @bool@ should be @TyTrue@.
---   if @s@ doesn't contains @e@, @bool@ should be @TyFalse@.
-class Contains e s bool | e s -> bool where
-    contains :: e -> s -> bool
-
--- | Class which calculates type level disjunction.
-class TyOr a b r | a b -> r where
-    tyor :: a -> b -> r
-
-{-
-  And implementaions.
-  Methods in classes are not often used, but make debugging easier.
- -}
-
-instance MayHave e f where
-    inj' _ _ = Nothing
-    prj' _   = Nothing
-instance MayHave e e where
-    inj' e _ = Just e
-    prj' e   = Just e
-instance (MayHave e h,MayHave e t) => MayHave e (h :*: t) where
-    inj' e ~(h:*:t) = maybe (fmap (h:*:) (inj' e t)) (Just . (:*:t)) (inj' e h)
-    prj'   ~(h:*:t) = maybe (prj' t)   Just (prj' h)
-
-instance (b ~ TyTrue) => Contains e e b where
-    contains _ _ = TyTrue
-instance (b ~ TyFalse) => Contains e f b where
-    contains _ _ = TyFalse
-instance (TyOr x y b, Contains e h x, Contains e t y) => Contains e (h :*: t) b where
-    contains e ~(h:*:t) = contains e h `tyor` contains e t
-
-instance TyOr TyTrue b TyTrue where
-    tyor _ _ = TyTrue
-instance TyOr TyFalse b b where
-    tyor _ b = b
+instance Has e (e ::: r) where
+    inj e ~(e' ::: r) = e ::: r
+    prj   ~(e' ::: r) = e'
+instance Has e r => Has e (h ::: r) where
+    inj e ~(h ::: r) = h ::: inj e r
+    prj   ~(h ::: r) = prj r
