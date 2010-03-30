@@ -11,11 +11,13 @@ module Data.Has
   , upd
 
   -- * Working with labelled values
-  -- , (:>)
-  -- , label, unlabel
-  -- , (.>), (.<)
-  -- , injl, prjl, updl
+  , Labelled(), (:>), (.>)
+  , injl, prjl, updl
   ) where
+
+import Control.Applicative
+import Test.QuickCheck (Arbitrary(..), CoArbitrary(..))
+import Data.Monoid (Monoid (..))
 
 import Data.Has.Engine
 
@@ -23,52 +25,54 @@ import Data.Has.Engine
 upd :: (Has e s) => (e -> e) -> s -> s
 upd f s = let e = prj s in inj (f e) s
 
--- Labelled values
 
--- | Represents labelled value
--- newtype (:>) lab a = Lab { unLab :: a }
---     deriving (Eq,Ord,Show,Read,Bounded)
+-- Labelled Values
 
--- instance (Monoid a) => Monoid (lab :> a) where
---     mempty = Lab mempty
---     mappend a b = Lab (unLab a `mappend` unLab b)
+-- | Represents labelled value.
+newtype Labelled lab a = Label { unLabelled :: a }
+    deriving (Eq,Ord,Show,Read,Bounded)
 
--- instance (Arbitrary a) => Arbitrary (lab :> a) where
---     arbitrary = Lab <$> arbitrary
+-- | Represents labelled row.
+type lab :> a = Row (Labelled lab a)
+infix 6 :>
 
--- instance (CoArbitrary a) => CoArbitrary (lab :> a) where
---     coarbitrary = coarbitrary . unLab
+-- | Attaches a label.
+label :: lab -> a -> Labelled lab a
+label _ a = Label a
 
--- -- | attaches a label
--- label :: lab -> a -> lab :> a
--- label _ a = Lab a
+-- | Detaches a label.
+unlabel :: lab -> Labelled lab a -> a
+unlabel _ = unLabelled
 
--- -- | detaches a label
--- unlabel :: lab -> lab :> a -> a
--- unlabel _ = unLab
+-- | Makes a labelled row.
+(.>) :: lab -> a -> lab :> a
+(.>) = (row .) . label
 
--- -- | Operator version of 'label'
--- (.>) :: lab -> a -> lab :> a
--- (.>) = label
+infix 6 .>
 
--- -- | Operator version of 'unlabel'
--- (.<) :: lab -> lab :> a -> a
--- (.<) = unlabel
+-- | Injects and Projects a labelled values into records.
+class (Has (Labelled lab e) s) => HasLabelled lab e s | lab s -> e where
+    -- | Injects a labelled value
+    injl :: lab -> e -> s -> s
+    -- | Projects a labelled value
+    prjl :: lab -> s -> e
 
--- infix 6 .>
--- infix 6 .<
+instance (Has (Labelled lab e) s) => HasLabelled lab e s where
+    injl lab e s = inj (label lab e) s
+    prjl lab s   = unlabel lab (prj s)
 
--- -- | Projects a labelled value
--- prjl :: (Has (lab :> b) a)
---      => lab -> a -> b
--- prjl lab = unlabel lab . prj
+-- | Updates a labelled value
+updl :: (HasLabelled lab b a)
+     => lab -> (b -> b) -> (a -> a)
+updl lab f a = let b = prjl lab a in injl lab (f b) a
 
--- -- | Injects a labelled value
--- injl :: (Has (lab :> b) a)
---      => lab -> b -> a -> a
--- injl lab b = inj (label lab b)
+-- And Instances
+instance (Monoid a) => Monoid (Labelled lab a) where
+    mempty = Label mempty
+    mappend a b = Label (unLabelled a `mappend` unLabelled b)
 
--- -- | Updates a labelled value
--- updl :: (Has (lab :> b) a)
---      => lab -> (b -> b) -> (a -> a)
--- updl lab f a = let b = prjl lab a in injl lab (f b) a
+instance (Arbitrary a) => Arbitrary (Labelled lab a) where
+    arbitrary = Label <$> arbitrary
+
+instance (CoArbitrary a) => CoArbitrary (Labelled lab a) where
+    coarbitrary = coarbitrary . unLabelled

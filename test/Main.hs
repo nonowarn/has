@@ -8,9 +8,9 @@ import Data.Has
 
 main = defaultMain
        [ testGroup "Typical Usage" test_typical_usage
---       , testGroup "Corner Cases"  test_corner_cases
+       , testGroup "Corner Cases"  test_corner_cases
 --       , testGroup "Newtypes"      test_newtypes
---       , testGroup "Labelled Values" test_labelled_values
+       , testGroup "Labelled Values" test_labelled_values
        ]
 
 eq test_name expected actual =
@@ -47,22 +47,25 @@ test_typical_usage =
              (2::Int) (if prj intBool then prj intBool + 1 else -1)
     ]
 
--- test_corner_cases =
---     [ testGroup "If there are same types in a type list"
---       [ eq "left-most data wins in injection"
---                (P (-1) :*: P 2 :*: P 3)
---                (inj (P (-1)) (P 1 :*: P 2 :*: P 3))
---       , eq "left-most data wins in projection also"
---                (P 1)
---                (prj (P 1 :*: P 2 :*: P 3))
---       , eq "even they are nested complexly"
---                (P 0)
---                (prj (P 0 :*: (P 1 :*: (P 2 :*: P 3) :*: (P 4 :*: P 5)) :*: P 6))
---       , eq "even the type does not occur outer-most"
---                (P 2)
---                (prj (Q 0 :*: (R 1 :*: (P 2 :*: R 3) :*: P 4) :*: R 5 :*: Q 6))
---       ]
---     ]
+data L = L; data M = M; data N = N
+
+test_corner_cases =
+    [ testGroup "If there are same types in a type list"
+      [ eq "left-most data wins in injection"
+               (L .> 'a' & L .> 'b' & L .> 'c')
+               (injl L 'a' (L .> 'x' & L .> 'b' & L .> 'c'))
+      , eq "left-most data wins in projection also"
+               'a'
+               (prjl L (L .> 'a' & L .> 'b' & L .> 'c'))
+      , eq "even they are nested complexly"
+               'a'
+               (prjl L
+                ((L .> 'a' & L .> 'b') & (L .> 'c' & L .> 'd' & L .> 'e') & L .> 'f'))
+      , eq "even the type does not occur outer-most"
+               'c'
+               (prjl L (M .> 'a' & (N .> 'b' & (L .> 'c' & M .> 'd') & L .> 'e')))
+      ]
+    ]
 
 -- newtype NT = NT (P :*: Q)
 --     deriving (Show,Eq,Has P,Has Q)
@@ -111,16 +114,16 @@ test_typical_usage =
 --       ]
 --     ]
 
--- data X = X; data Y = Y; data Z = Z;
+data X = X; data Y = Y; data Z = Z;
 
--- test_labelled_values =
---     [ eq "inject a value by a label"
---          (X .> "foo" :*: Y .> "bar" :*: Z .> "baz")
---          (injl X "foo" (X .> "boo" :*: Y .> "bar" :*: Z .> "baz"))
---     , eq "project a value by a label"
---          "bar"
---          (prjl Y (X .> "boo" :*: Y .> "bar" :*: Z .> "baz"))
---     , eq "update a value by a label"
---          (X .> "foofoo" :*: Y .> "bar" :*: Z .> "baz")
---          (updl X (++"foo") (X .> "foo" :*: Y .> "bar" :*: Z .> "baz"))
---     ]
+test_labelled_values =
+    [ eq "inject a value by a label"
+         (X .> "foo" & Y .> "bar" & Z .> "baz")
+         (injl X "foo" (X .> "boo" & Y .> "bar" & Z .> "baz"))
+    , eq "project a value by a label"
+         "bar"
+         (prjl Y (X .> "boo" & Y .> "bar" & Z .> "baz"))
+    , eq "update a value by a label"
+         (X .> "foofoo" & Y .> "bar" & Z .> "baz")
+         (updl X (++"foo") (X .> "foo" & Y .> "bar" & Z .> "baz"))
+    ]
