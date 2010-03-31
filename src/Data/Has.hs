@@ -1,4 +1,4 @@
-{-# OPTIONS_GHC -fglasgow-exts -fno-warn-orphans #-}
+{-# OPTIONS_GHC -fglasgow-exts #-}
 {-# LANGUAGE UndecidableInstances #-}
 
 -- | Provides some pliant data types and functions.
@@ -12,7 +12,7 @@ module Data.Has
 
   -- * Working with labelled values
   , Labelled(), (:>), (.>)
-  , HasLabelled(..), updl
+  , Knows(..), updl
 
   -- * Make parsing error messages easier
   , (:::), TyNil()
@@ -55,22 +55,22 @@ unlabel _ = unLabelled
 infix 6 .>
 
 -- | Injects and Projects a labelled values into records.
-class (Has (Labelled lab e) s) => HasLabelled lab e s | lab s -> e where
+class (Has (Labelled lab e) s) => Knows lab e s | lab s -> e where
     -- | Injects a labelled value
     injl :: lab -> e -> s -> s
     -- | Projects a labelled value
     prjl :: lab -> s -> e
 
-instance (Has (Labelled lab e) s) => HasLabelled lab e s where
+instance (Has (Labelled lab e) s) => Knows lab e s where
     injl lab e s = inj (label lab e) s
     prjl lab s   = unlabel lab (prj s)
 
 -- | Updates a labelled value
-updl :: (HasLabelled lab b a)
+updl :: (Knows lab b a)
      => lab -> (b -> b) -> (a -> a)
 updl lab f a = let b = prjl lab a in injl lab (f b) a
 
--- And Instances
+-- And misc instances
 instance (Monoid a) => Monoid (Labelled lab a) where
     mempty = Label mempty
     mappend a b = Label (unLabelled a `mappend` unLabelled b)
