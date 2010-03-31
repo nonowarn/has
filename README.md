@@ -3,38 +3,44 @@ has
 
 This is a library which provides generic accessors for records.
 
-    -- This example is based on fclabel's one: http://hackage.haskell.org/package/fclabels
-    
+    -- This example is based on fclabel's one: http://hackage.haskell.org/package
     import Data.Has
-    
     import Control.Arrow
     
-    type Person = Name :*: Age :*: Sex :*: Place
-    type Place  = City :*: Country
+    data Age = Age; data Name = Name
+    data City = City; data Country = Country
     
-    newtype Name = Name { unName :: String }
-    newtype Age  = Age  { unAge  :: Int    }
-    data    Sex  = Male | Female
-    newtype City = City { unCity :: String }
-    newtype Country = Country { unCountry :: String }
+    data Sex = Male | Female deriving (Show)
+    
+    type Person = Place :&: Info
+    
+    type Info   = Age :> Int :&: Name :> String :&: Row Sex
+    type Place  = City :> String :&: Country :> String
     
     nonowarn :: Person
-    nonowarn =   Name "nonowarn"
-             :*: Age 17
-             :*: Male
-             :*: City "Yokohama"
-             :*: Country "Japan"
+    nonowarn = nonowarnPlace & nonowarnInfo
+      where
+        nonowarnPlace = City .> "Yokohama" & Country .> "Japan"
+        nonowarnInfo  = Age .> 17 & Name .> "nonowarn" & row Male
     
-    getAge :: (Has Age a) => a -> Int
-    getAge = unAge . prj
+    -- nonowarn :: Person
+    -- nonowarn = injl Name "nonowarn"
+    --          . injl Age 17
+    --          . inj Male
+    --          . injl City "Yokohama"
+    --          . injl Country "Japan"
+    --          $ error "unknown record"
     
-    moveToKyoto :: (Has City a) => a -> a
-    moveToKyoto = inj (City "Kyoto")
+    getAge :: (Knows Age Int a) => a -> Int
+    getAge = prjl Age
     
-    getCity :: (Has City a) => a -> String
-    getCity = unCity . prj
+    moveToKyoto :: (Knows City String a) => a -> a
+    moveToKyoto = injl City "Kyoto"
     
-    spendFourYears :: (Has Age a) => a -> a
-    spendFourYears = upd (Age . (+4) . unAge)
+    getCity :: (Knows City String a) => a -> String
+    getCity = prjl City
+    
+    spendFourYears :: (Knows Age Int a) => a -> a
+    spendFourYears = updl Age (+4)
     
     test = (21,"Kyoto") == ((getAge &&& getCity) . spendFourYears . moveToKyoto $ nonowarn)
