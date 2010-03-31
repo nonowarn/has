@@ -10,7 +10,7 @@
 -- Stability   :  experimental
 -- Portability :  unknown
 --
--- Provides some pliant data types and functions.
+-- Entiry based records.
 
 module Data.Has
   (
