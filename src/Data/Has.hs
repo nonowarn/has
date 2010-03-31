@@ -12,7 +12,10 @@ module Data.Has
 
   -- * Working with labelled values
   , Labelled(), (:>), (.>)
-  , injl, prjl, updl
+  , HasLabelled(..), updl
+
+  -- * Make parsing error messages easier
+  , (:::), TyNil()
   ) where
 
 import Control.Applicative
@@ -20,6 +23,7 @@ import Test.QuickCheck (Arbitrary(..), CoArbitrary(..))
 import Data.Monoid (Monoid (..))
 
 import Data.Has.Engine
+import Data.Has.TypeList ((:::), TyNil)
 
 -- | Updates a value @e@ in @s@, using given function @e -> e@.
 upd :: (Has e s) => (e -> e) -> s -> s
