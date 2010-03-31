@@ -1,7 +1,16 @@
 {-# OPTIONS_GHC -fglasgow-exts #-}
 {-# LANGUAGE UndecidableInstances #-}
 
--- | Provides some pliant data types and functions.
+-- |
+-- Module      :  Data.Has
+-- Copyright   :  HASHIMOTO, Yusaku 2010
+-- License     :  BSD3
+--
+-- Maintainer  :  nonowarn@gmail.com
+-- Stability   :  experimental
+-- Portability :  unknown
+--
+-- Provides some pliant data types and functions.
 
 module Data.Has
   (
