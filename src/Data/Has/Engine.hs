@@ -5,15 +5,33 @@ module Data.Has.Engine where
 
 import Data.Has.TypeList
 
+-- | @Row a@ is a type list which contains only one element of
+--   @a@. And every row in the records should be this type.
 type Row a = a ::: TyNil
 
+-- | Creates a 'Row' of @a@.
 row :: a -> Row a
 row a = a ::: TyNil
+
+-- | Concatenates between 'Row's or records. Records means, in other
+--   words, concatenations of rows. For example, Following expressions
+--   are valid.
+--
+-- > -- Concatenation of rows (i.e. record)
+-- > row "string" & row True
+--
+-- > -- Concatenation of records
+-- > (row 'c' & row ()) & (row False & row "string")
+--
+-- > -- ... And concatenations between a row and a record
+-- > row () & (row False & row "string")
+-- > (row 'c' & row ()) & row False
 
 (&) :: (Append a b) => a -> b -> a :&: b
 (&) = (.++.)
 infixr 5 &
 
+-- | Represents concatenated rows.
 type family a :&: b
 type instance a :&: b = a :++: b
 infixr 5 :&:
