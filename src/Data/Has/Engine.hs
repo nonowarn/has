@@ -13,9 +13,9 @@ type Row a = a ::: TyNil
 row :: a -> Row a
 row a = a ::: TyNil
 
--- | Concatenates between 'Row's or records. Records means, in other
---   words, concatenations of rows. For example, Following expressions
---   are valid.
+-- | Concatenates between 'Row's or records. Records means
+--   concatenations of rows. For example, Following expressions are
+--   valid.
 --
 -- > -- Concatenation of rows (i.e. record)
 -- > row "string" & row True
@@ -26,12 +26,11 @@ row a = a ::: TyNil
 -- > -- ... And concatenations between a row and a record
 -- > row () & (row False & row "string")
 -- > (row 'c' & row ()) & row False
-
 (&) :: (Append a b) => a -> b -> a :&: b
 (&) = (.++.)
 infixr 5 &
 
--- | Represents concatenated rows.
+-- | Represents concatenated rows or records.
 type family a :&: b
 type instance a :&: b = a :++: b
 infixr 5 :&:
