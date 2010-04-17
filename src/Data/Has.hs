@@ -23,6 +23,9 @@ module Data.Has
   , Labelled(), (:>), (.>)
   , Knows(..), updl
 
+  -- ** And aliases
+  , (^=), (.^)
+
   -- * Make parsing error messages easier
   , (:::), TyNil()
   ) where
@@ -78,6 +81,16 @@ instance (Has (Labelled lab e) s) => Knows lab e s where
 updl :: (Knows lab b a)
      => lab -> (b -> b) -> (a -> a)
 updl lab f a = let b = prjl lab a in injl lab (f b) a
+
+-- | Opeartor version of 'injl'
+(^=) :: (Knows lab e s) => lab -> e -> s -> s
+(^=) = injl
+infix 6 ^=
+
+-- | Operator version of 'prjl'
+(.^) :: (Knows lab e s) => lab -> s -> e
+(.^) = prjl
+infix 4 .^
 
 -- And misc instances
 instance (Monoid a) => Monoid (Labelled lab a) where

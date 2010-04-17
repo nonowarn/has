@@ -115,10 +115,10 @@ data X = X; data Y = Y; data Z = Z;
 test_labelled_values =
     [ eq "inject a value by a label"
          (X .> "foo" & Y .> "bar" & Z .> "baz")
-         (injl X "foo" (X .> "boo" & Y .> "bar" & Z .> "baz"))
+         (X ^= "foo" $ X .> "boo" & Y .> "bar" & Z .> "baz")
     , eq "project a value by a label"
          "bar"
-         (prjl Y (X .> "boo" & Y .> "bar" & Z .> "baz"))
+         (Y .^ X .> "boo" & Y .> "bar" & Z .> "baz")
     , eq "update a value by a label"
          (X .> "foofoo" & Y .> "bar" & Z .> "baz")
          (updl X (++"foo") (X .> "foo" & Y .> "bar" & Z .> "baz"))
