@@ -24,7 +24,7 @@ module Data.Has
   , Knows(..), updl
 
   -- ** And aliases
-  , (^=), (.^)
+  , (^=), (^.)
 
   -- * Make parsing error messages easier
   , (:::), TyNil()
@@ -88,9 +88,9 @@ updl lab f a = let b = prjl lab a in injl lab (f b) a
 infix 6 ^=
 
 -- | Operator version of 'prjl'
-(.^) :: (Knows lab e s) => lab -> s -> e
-(.^) = prjl
-infix 4 .^
+(^.) :: (Knows lab e s) => lab -> s -> e
+(^.) = prjl
+infix 4 ^.
 
 -- And misc instances
 instance (Monoid a) => Monoid (Labelled lab a) where
