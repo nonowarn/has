@@ -36,15 +36,15 @@ type instance a :&: b = a :++: b
 infixr 5 :&:
 
 -- | Provides plient function. Holds @e == prj (inj e s)@ for all @s@ and @e@.
-class Has e s where
+class Contains e s where
     -- | Injects a value of type @e@ into @s@ if @s@ contains the type @e@.
     inj :: e -> s -> s
     -- | Projects a value of type @e@ out from @s@ if @s@ contains the type @e@.
     prj :: s -> e
 
-instance Has e (e ::: r) where
+instance Contains e (e ::: r) where
     inj e ~(e' ::: r) = e ::: r
     prj   ~(e' ::: r) = e'
-instance Has e r => Has e (h ::: r) where
+instance Contains e r => Contains e (h ::: r) where
     inj e ~(h ::: r) = h ::: inj e r
     prj   ~(h ::: r) = prj r
