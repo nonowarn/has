@@ -13,8 +13,8 @@ type Row a = a ::: TyNil
 row :: a -> Row a
 row a = a ::: TyNil
 
--- | Concatenates between 'Row's or records. Records means
---   concatenations of rows. For example, Following expressions are
+-- | Concatenates between 'Row's or records. Records are
+--   concatenated rows. For example, Following expressions are
 --   valid.
 --
 -- > -- Concatenation of rows (i.e. record)

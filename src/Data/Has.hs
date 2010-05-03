@@ -14,23 +14,25 @@
 
 module Data.Has
   (
-  -- * Core
-    (&), (:&:), row
-  , Has(..), Row
-  , upd
+  -- * Has class
+    Has
 
-  -- * Working with labelled values
-  , Labelled(), (:>), (.>)
+  -- * Rows in records
+  , Row
+  , (&), (:&:), row
+
+  -- * Update and Lookup values from records
+  , (^=), (^.), (^:)
   , Knows(..), updl
 
-  -- ** And aliases
-  , (^=), (^.), (^:)
+  -- * Labelled values
+  , Labelled(), (:>), (.>)
 
   -- ** Defining labels
   , TypeOf, RowOf, rowOf
 
   -- * Make parsing error messages easier
-  , (:::), TyNil()
+  , (:::)(), TyNil(), Contains()
   ) where
 
 import Control.Applicative
@@ -80,29 +82,40 @@ updl :: (Knows lab b a)
      => lab -> (b -> b) -> (a -> a)
 updl lab f a = let b = prjl lab a in injl lab (f b) a
 
+-- | TypeOf @a@ should indicate a type labelled by @a@
 type family TypeOf a
 
+-- | > RowOf a == a :> TypeOf a
 type family RowOf a
 type instance RowOf a = a :> TypeOf a
 
+-- | Creates a row labelled by @a@
 rowOf :: TypeOf a -> RowOf a
 rowOf a = undefined .> a
 
+-- | Same as @Knows lab (TypeOf lab) s@, Useful on writing type
+--   signitures.
+--
+--   Holds @e == (lab .^ (lab ^= e $ s))@
+--   where @lab :: lab; e :: TypeOf lab; s :: s@
 class (Knows lab (TypeOf lab) s) => Has lab s
 instance (Knows lab (TypeOf lab) s) => Has lab s
 
--- | Opeartor version of 'injl'
-(^=) :: (Knows lab (TypeOf lab) s) => lab -> TypeOf lab -> s -> s
+-- | Strict version of 'injl'
+(^=) :: (Knows lab (TypeOf lab) s)
+     => lab -> TypeOf lab -> s -> s
 (^=) = injl
 infix 6 ^=
 
--- | Operator version of 'prjl'
-(^.) :: (Knows lab (TypeOf lab) s) => lab -> s -> TypeOf lab
+-- | Strict version of 'prjl'
+(^.) :: (Knows lab (TypeOf lab) s)
+     => lab -> s -> TypeOf lab
 (^.) = prjl
 infix 4 ^.
 
--- | Operator version of 'updl'
-(^:) :: (Knows lab (TypeOf lab) s)=> lab -> (TypeOf lab -> TypeOf lab) -> (s -> s)
+-- | Strict version of 'updl'
+(^:) :: (Knows lab (TypeOf lab) s)
+     => lab -> (TypeOf lab -> TypeOf lab) -> (s -> s)
 (^:) = updl
 infixr 5 ^:
 
