@@ -1,23 +1,25 @@
 {-# OPTIONS_GHC -fglasgow-exts #-}
 
+import Control.Monad
+import System.Environment.UTF8
+
 import Data.Has
 
-import Control.Monad
-import System.Environment
+data Name = Name; type instance TypeOf Name = String
+data Greeting = Greeting; type instance TypeOf Greeting = String
+data NumGreet = NumGreet; type instance TypeOf NumGreet = Int
+data WithNewLine = WithNewLine; type instance TypeOf WithNewLine = Bool
 
-data Name = Name
-data NumGreet = NumGreet
-data WithNewLine = WithNewLine
-
-type GreetOpt =   Name        :> String
-              :&: NumGreet    :> Int
-              :&: WithNewLine :> Bool
+type GreetOpt = RowOf Name
+              :&: RowOf Greeting
+              :&: RowOf NumGreet
+              :&: RowOf WithNewLine
 
 greet :: GreetOpt -> IO ()
 greet gopt = replicateM_
                (NumGreet ^. gopt)
                ((if WithNewLine ^. gopt then putStrLn else putStr)
-                ("Hello, " ++ (Name ^. gopt) ++ "."))
+                ((Greeting ^. gopt) ++ ", " ++ (Name ^. gopt) ++ "."))
 
 main = do
     gopt <- fmap parse getArgs
@@ -25,8 +27,11 @@ main = do
   where
     parse :: [String] -> GreetOpt
     parse ("-n":params) = WithNewLine ^= False $ parse params
-    parse (name:number:params) | ((numGreet,_):_) <- reads number =
-       Name ^= name $ NumGreet ^= numGreet $ parse params
-    parse _ = Name .> "an anonymous user"
-            & NumGreet .> 1
-            & WithNewLine .> True
+    parse (name:greeting:number:params) | ((numGreet,_):_) <- reads number =
+       Name ^= name
+     $ Greeting ^= greeting
+     $ NumGreet ^= numGreet $ parse params
+    parse _ = rowOf "an anonymous user"
+            & rowOf "Hello"
+            & rowOf 1
+            & rowOf True
