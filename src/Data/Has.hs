@@ -24,7 +24,10 @@ module Data.Has
   , Knows(..), updl
 
   -- ** And aliases
-  , (^=), (^.)
+  , (^=), (^.), (^:)
+
+  -- ** Defining labels
+  , TypeOf, RowOf, rowOf
 
   -- * Make parsing error messages easier
   , (:::), TyNil()
@@ -36,11 +39,6 @@ import Data.Monoid (Monoid (..))
 
 import Data.Has.Engine
 import Data.Has.TypeList ((:::), TyNil)
-
--- | Updates a value @e@ in @s@, using given function @e -> e@.
-upd :: (Has e s) => (e -> e) -> s -> s
-upd f s = let e = prj s in inj (f e) s
-
 
 -- Labelled Values
 
@@ -67,13 +65,13 @@ unlabel _ = unLabelled
 infix 6 .>
 
 -- | Injects and Projects a labelled values into records.
-class (Has (Labelled lab e) s) => Knows lab e s | lab s -> e where
+class (Contains (Labelled lab e) s) => Knows lab e s | lab s -> e where
     -- | Injects a labelled value
     injl :: lab -> e -> s -> s
     -- | Projects a labelled value
     prjl :: lab -> s -> e
 
-instance (Has (Labelled lab e) s) => Knows lab e s where
+instance (Contains (Labelled lab e) s) => Knows lab e s where
     injl lab e s = inj (label lab e) s
     prjl lab s   = unlabel lab (prj s)
 
@@ -82,15 +80,31 @@ updl :: (Knows lab b a)
      => lab -> (b -> b) -> (a -> a)
 updl lab f a = let b = prjl lab a in injl lab (f b) a
 
+type family TypeOf a
+
+type family RowOf a
+type instance RowOf a = a :> TypeOf a
+
+rowOf :: TypeOf a -> RowOf a
+rowOf a = undefined .> a
+
+class (Knows lab (TypeOf lab) s) => Has lab s
+instance (Knows lab (TypeOf lab) s) => Has lab s
+
 -- | Opeartor version of 'injl'
-(^=) :: (Knows lab e s) => lab -> e -> s -> s
+(^=) :: (Has lab s) => lab -> TypeOf lab -> s -> s
 (^=) = injl
 infix 6 ^=
 
 -- | Operator version of 'prjl'
-(^.) :: (Knows lab e s) => lab -> s -> e
+(^.) :: (Has lab s) => lab -> s -> TypeOf lab
 (^.) = prjl
 infix 4 ^.
+
+-- | Operator version of 'updl'
+(^:) :: (Has lab s) => lab -> (TypeOf lab -> TypeOf lab) -> (s -> s)
+(^:) = updl
+infixr 5 ^:
 
 -- And misc instances
 instance (Monoid a) => Monoid (Labelled lab a) where

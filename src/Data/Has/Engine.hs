@@ -48,3 +48,7 @@ instance Contains e (e ::: r) where
 instance Contains e r => Contains e (h ::: r) where
     inj e ~(h ::: r) = h ::: inj e r
     prj   ~(h ::: r) = prj r
+
+-- | Updates a value @e@ in @s@, using given function @e -> e@.
+upd :: (Contains e s) => (e -> e) -> s -> s
+upd f s = let e = prj s in inj (f e) s
