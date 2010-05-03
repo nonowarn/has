@@ -5,11 +5,11 @@ import Test.Framework
 import Test.Framework.Providers.HUnit
 
 import Data.Has
+import Data.Has.Engine
 
 main = defaultMain
        [ testGroup "Typical Usage" test_typical_usage
        , testGroup "Corner Cases"  test_corner_cases
-       , testGroup "Newtypes"      test_newtypes
        , testGroup "Labelled Values" test_labelled_values
        ]
 
@@ -67,59 +67,23 @@ test_corner_cases =
       ]
     ]
 
-newtype NT = NT (Row P :&: Row Q)
-    deriving (Show,Eq,Has P,Has Q)
-newtype NT' = NT' (Row P :&: NT)
-    deriving (Show,Eq,Has P,Has Q) -- This is OK
-newtype NT'' = NT'' (Row P :&: NT')
-    deriving (Show,Eq,Has P,Has Q) -- This is also OK
-
--- But following data declaration can't derive Has.
---
--- > newtype NT3 = NT3 (NT :&: Row P)
--- >     deriving (Show,Eq,Has P)
--- > newtype NT4 = NT4 (NT :&: NT)
--- >     deriving (Show,Eq,Has P)
---
--- Because (:&:) actually is an append operator on type lists. It
--- recurses on its left argument. So if left argument is not type
--- list, the Compiler can't what actual type of it, complains "no
--- instances for this" (at least ghc does. I think it should be "don't
--- know how to append a data which isn't a type list onto a type
--- list")
-
-test_newtypes =
-    [ testGroup "can derive Has class with GND"
-      [ eq "it works in injection"
-               (NT $ p 4 & q 2)
-               (inj (P 4) (NT $ p 2 & q 2))
-      , eq "it works in projection"
-               (Q 2) (prj (NT $ p 2 & q 2))
-      ]
-    , testGroup "can wrap another newtype and derive instances"
-      [ testGroup "outer-left-most type still wins"
-        [ eq "in injection"
-             (NT' $ p 10 & NT (p 0 & q 0))
-             (inj (P 10) (NT' $ p 0 & NT (p 0 & q 0)))
-        , eq "in projection"
-             (P 10) (prj (NT' $ p 10 & NT (p 0 & q 0)))
-        , eq "more nestings"
-             (P 77) (prj (NT'' $ p 77 & NT' ((p 10) & NT (p 0 & q 0))))
-        ]
-      ]
-    ]
-  where p = row . P; q = row . Q
-
 data X = X; data Y = Y; data Z = Z;
+type instance TypeOf X = String
+type instance TypeOf Y = String
+type instance TypeOf Z = String
+
+type C = RowOf X :&: RowOf Y :&: RowOf Z
+mkC :: String -> String -> String -> C
+mkC x y z = rowOf x & rowOf y & rowOf z
 
 test_labelled_values =
     [ eq "inject a value by a label"
-         (X .> "foo" & Y .> "bar" & Z .> "baz")
-         (X ^= "foo" $ X .> "boo" & Y .> "bar" & Z .> "baz")
+         (mkC "foo" "bar" "baz")
+         (X ^= "foo" $ mkC "boo" "bar" "baz")
     , eq "project a value by a label"
          "bar"
-         (Y ^. X .> "boo" & Y .> "bar" & Z .> "baz")
+         (Y ^. mkC "boo" "bar" "baz")
     , eq "update a value by a label"
          (X .> "foofoo" & Y .> "bar" & Z .> "baz")
-         (updl X (++"foo") (X .> "foo" & Y .> "bar" & Z .> "baz"))
+         (X ^: (++"foo") $ mkC "foo" "bar" "baz")
     ]

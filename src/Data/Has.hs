@@ -92,17 +92,17 @@ class (Knows lab (TypeOf lab) s) => Has lab s
 instance (Knows lab (TypeOf lab) s) => Has lab s
 
 -- | Opeartor version of 'injl'
-(^=) :: (Has lab s) => lab -> TypeOf lab -> s -> s
+(^=) :: (Knows lab (TypeOf lab) s) => lab -> TypeOf lab -> s -> s
 (^=) = injl
 infix 6 ^=
 
 -- | Operator version of 'prjl'
-(^.) :: (Has lab s) => lab -> s -> TypeOf lab
+(^.) :: (Knows lab (TypeOf lab) s) => lab -> s -> TypeOf lab
 (^.) = prjl
 infix 4 ^.
 
 -- | Operator version of 'updl'
-(^:) :: (Has lab s) => lab -> (TypeOf lab -> TypeOf lab) -> (s -> s)
+(^:) :: (Knows lab (TypeOf lab) s)=> lab -> (TypeOf lab -> TypeOf lab) -> (s -> s)
 (^:) = updl
 infixr 5 ^:
 
