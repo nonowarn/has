@@ -3,7 +3,11 @@ Version:             0.2.1
 Synopsis:            Entity based records
 Description:         Usage: <http://github.com/nonowarn/has/blob/master/README.md>
                      .
-                     And its test would be helpful: <http://github.com/nonowarn/has/blob/master/test/Main.hs>
+                     And its examples and test would be helpful:
+                     .
+                     * <http://github.com/nonowarn/has/tree/master/examples/>
+                     .
+                     * <http://github.com/nonowarn/has/blob/master/test/Main.hs>
 Homepage:            http://github.com/nonowarn/has
 License:             BSD3
 License-file:        LICENSE
