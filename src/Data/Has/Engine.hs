@@ -43,11 +43,11 @@ class Contains e s where
     prj :: s -> e
 
 instance Contains e (e ::: r) where
-    inj e ~(e' ::: r) = e ::: r
-    prj   ~(e' ::: r) = e'
+    inj e ~(_  ::: r) = e ::: r
+    prj   ~(e' ::: _) = e'
 instance Contains e r => Contains e (h ::: r) where
     inj e ~(h ::: r) = h ::: inj e r
-    prj   ~(h ::: r) = prj r
+    prj   ~(_ ::: r) = prj r
 
 -- | Updates a value @e@ in @s@, using given function @e -> e@.
 upd :: (Contains e s) => (e -> e) -> s -> s
