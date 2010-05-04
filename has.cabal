@@ -14,7 +14,11 @@ Stability:           Experimental
 Category:            Data
 Build-type:          Custom
 Cabal-version:       >=1.6
+
 Extra-source-files:  README.md
+                     examples/DefaultParameter.hs
+                     examples/Points.hs
+                     examples/Time.hs
 
 Library
   Hs-source-dirs:    src
