@@ -5,27 +5,27 @@ module Data.Has.Engine where
 
 import Data.Has.TypeList
 
--- | @Row a@ is a type list which contains only one element of
---   @a@. And every row in the records should be this type.
-type Row a = a ::: TyNil
+-- | @Field a@ is a type list which contains only one element of
+--   @a@. And every field in the records should be this type.
+type Field a = a ::: TyNil
 
--- | Creates a 'Row' of @a@.
-row :: a -> Row a
-row a = a ::: TyNil
+-- | Creates a 'Field' of @a@.
+field :: a -> Field a
+field a = a ::: TyNil
 
--- | Concatenates between 'Row's or records. Records are
+-- | Concatenates between 'Field's or records. Records are
 --   concatenated rows. For example, Following expressions are
 --   valid.
 --
 -- > -- Concatenation of rows (i.e. record)
--- > row "string" & row True
+-- > field "string" & field True
 --
 -- > -- Concatenation of records
--- > (row 'c' & row ()) & (row False & row "string")
+-- > (field 'c' & field ()) & (field False & field "string")
 --
--- > -- ... And concatenations between a row and a record
--- > row () & (row False & row "string")
--- > (row 'c' & row ()) & row False
+-- > -- ... And concatenations between a field and a record
+-- > field () & (field False & field "string")
+-- > (field 'c' & field ()) & field False
 (&) :: (Append a b) => a -> b -> a :&: b
 (&) = (.++.)
 infixr 5 &

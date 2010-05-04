@@ -20,8 +20,8 @@ newtype P = P Int deriving (Eq,Show)
 newtype Q = Q Int deriving (Eq,Show)
 newtype R = R Int deriving (Eq,Show)
 
-pqr :: Int -> Int -> Int -> Row P :&: Row Q :&: Row R
-pqr p q r = row (P p) & row (Q q) & row (R r)
+pqr :: Int -> Int -> Int -> Field P :&: Field Q :&: Field R
+pqr p q r = field (P p) & field (Q q) & field (R r)
 
 test_typical_usage =
     [ eq "Project by Type" (Q 2) (prj (pqr 1 2 3))
@@ -42,7 +42,7 @@ test_typical_usage =
              (pqr 1 2 3)
              (inj (P 1) . inj (R 3) . inj (Q 2) $ undefined)
 
-    , let intBool = row (1::Int) & row True
+    , let intBool = field (1::Int) & field True
       in eq "prj selects a value from record with type inference"
              (2::Int) (if prj intBool then prj intBool + 1 else -1)
     ]
@@ -72,9 +72,9 @@ type instance TypeOf X = String
 type instance TypeOf Y = String
 type instance TypeOf Z = String
 
-type C = RowOf X :&: RowOf Y :&: RowOf Z
+type C = FieldOf X :&: FieldOf Y :&: FieldOf Z
 mkC :: String -> String -> String -> C
-mkC x y z = rowOf x & rowOf y & rowOf z
+mkC x y z = fieldOf x & fieldOf y & fieldOf z
 
 test_labelled_values =
     [ eq "inject a value by a label"

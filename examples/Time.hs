@@ -17,17 +17,17 @@ data TimeZone = TimeZone; type instance TypeOf TimeZone = Time.TimeZone
 -- Define Records
 -- Note reusing entities here
 
-type TimeOfDay = RowOf Hour :&: RowOf Minute :&: RowOf Second
+type TimeOfDay = FieldOf Hour :&: FieldOf Minute :&: FieldOf Second
 
-type Time = RowOf Day :&: RowOf Hour :&: RowOf Minute :&: RowOf Second
+type Time = FieldOf Day :&: FieldOf Hour :&: FieldOf Minute :&: FieldOf Second
 
-type ZonedTime = RowOf TimeZone :&: RowOf Day
-    :&: RowOf Hour :&: RowOf Minute :&: RowOf Second
+type ZonedTime = FieldOf TimeZone :&: FieldOf Day
+    :&: FieldOf Hour :&: FieldOf Minute :&: FieldOf Second
 
 -- But that was too verbose
 -- You can write same type as follows
--- > type Time = RowOf Day :&: TimeOfDay
--- > type ZonedTime = RowOf TimeZone :&: Time
+-- > type Time = FieldOf Day :&: TimeOfDay
+-- > type ZonedTime = FieldOf TimeZone :&: Time
 
 -- And you can write:
 
@@ -45,9 +45,9 @@ addHours time hours =
 
 getTod :: (Has Hour a, Has Minute a, Has Second a)
        => a -> TimeOfDay
-getTod a = rowOf (Hour ^. a)
-         & rowOf (Minute ^. a)
-         & rowOf (Second ^. a)
+getTod a = fieldOf (Hour ^. a)
+         & fieldOf (Minute ^. a)
+         & fieldOf (Second ^. a)
 
 getUnixTime :: IO Integer
 getUnixTime = fmap calc getUTCTime
@@ -83,7 +83,7 @@ epoch = Time.toModifiedJulianDay $ Time.fromGregorian 1970 1 1
 fromUTCTime :: Time.UTCTime -> Time
 fromUTCTime utctime =
     let tod = Time.timeToTimeOfDay (Time.utctDayTime utctime)
-    in rowOf (Time.toModifiedJulianDay (Time.utctDay utctime))
+    in fieldOf (Time.toModifiedJulianDay (Time.utctDay utctime))
      & fromTOD tod
 
 fromZonedTime :: Time.ZonedTime -> ZonedTime
@@ -91,14 +91,14 @@ fromZonedTime zonedtime =
     let localtime = Time.zonedTimeToLocalTime zonedtime
         day       = Time.toModifiedJulianDay $ Time.localDay localtime
         tod       = Time.localTimeOfDay localtime
-    in rowOf (Time.zonedTimeZone zonedtime)
-     & rowOf day
+    in fieldOf (Time.zonedTimeZone zonedtime)
+     & fieldOf day
      & fromTOD tod
 
 fromTOD :: Time.TimeOfDay -> TimeOfDay
-fromTOD tod = rowOf (Time.todHour tod)
-            & rowOf (Time.todMin tod)
-            & rowOf (Time.todSec tod)
+fromTOD tod = fieldOf (Time.todHour tod)
+            & fieldOf (Time.todMin tod)
+            & fieldOf (Time.todSec tod)
 
 showTime :: (Has Day a, Has Hour a, Has Minute a, Has Second a)
          => a -> String

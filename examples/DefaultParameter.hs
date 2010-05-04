@@ -10,10 +10,10 @@ data Greeting = Greeting; type instance TypeOf Greeting = String
 data NumGreet = NumGreet; type instance TypeOf NumGreet = Int
 data WithNewLine = WithNewLine; type instance TypeOf WithNewLine = Bool
 
-type GreetOpt = RowOf Name
-              :&: RowOf Greeting
-              :&: RowOf NumGreet
-              :&: RowOf WithNewLine
+type GreetOpt = FieldOf Name
+              :&: FieldOf Greeting
+              :&: FieldOf NumGreet
+              :&: FieldOf WithNewLine
 
 greet :: GreetOpt -> IO ()
 greet gopt = replicateM_
@@ -31,7 +31,7 @@ main = do
        Name ^= name
      $ Greeting ^= greeting
      $ NumGreet ^= numGreet $ parse params
-    parse _ = rowOf "an anonymous user"
-            & rowOf "Hello"
-            & rowOf 1
-            & rowOf True
+    parse _ = fieldOf "an anonymous user"
+            & fieldOf "Hello"
+            & fieldOf 1
+            & fieldOf True

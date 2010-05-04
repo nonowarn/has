@@ -8,7 +8,7 @@ data X = X; type instance TypeOf X = Int
 data Y = Y; type instance TypeOf Y = Int
 data Z = Z; type instance TypeOf Z = Int
 
-type Point2D = RowOf X :&: RowOf Y
+type Point2D = FieldOf X :&: FieldOf Y
 
 getXY :: (Has X p, Has Y p) => p -> (Int,Int)
 getXY = liftA2 (,) (X ^.) (Y ^.)
@@ -27,7 +27,7 @@ r = p2 8 (-2)
 d0 = dist2d p q
 d1 = dist2d p r
 
-type Point3D = RowOf X :&: RowOf Y :&: RowOf Z
+type Point3D = FieldOf X :&: FieldOf Y :&: FieldOf Z
 
 getXYZ :: (Has X p, Has Y p, Has Z p)
        => p -> (Int,Int,Int)

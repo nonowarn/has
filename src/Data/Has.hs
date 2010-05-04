@@ -18,8 +18,8 @@ module Data.Has
     Has
 
   -- * Rows in records
-  , Row
-  , (&), (:&:), row
+  , Field
+  , (&), (:&:), field
 
   -- * Update and Lookup values from records
   , (^=), (^.), (^:)
@@ -29,7 +29,7 @@ module Data.Has
   , Labelled(), (:>), (.>)
 
   -- ** Defining labels
-  , TypeOf, RowOf, rowOf
+  , TypeOf, FieldOf, fieldOf
 
   -- * Make parsing error messages easier
   , (:::)(), TyNil(), Contains()
@@ -48,8 +48,8 @@ import Data.Has.TypeList ((:::), TyNil)
 newtype Labelled lab a = Label { unLabelled :: a }
     deriving (Eq,Ord,Show,Read,Bounded)
 
--- | Represents labelled row.
-type lab :> a = Row (Labelled lab a)
+-- | Represents labelled field.
+type lab :> a = Field (Labelled lab a)
 infix 6 :>
 
 -- | Attaches a label.
@@ -60,9 +60,9 @@ label _ a = Label a
 unlabel :: lab -> Labelled lab a -> a
 unlabel _ = unLabelled
 
--- | Makes a labelled row.
+-- | Makes a labelled field.
 (.>) :: lab -> a -> lab :> a
-(.>) = (row .) . label
+(.>) = (field .) . label
 
 infix 6 .>
 
@@ -85,13 +85,13 @@ updl lab f a = let b = prjl lab a in injl lab (f b) a
 -- | TypeOf @a@ should indicate a type labelled by @a@
 type family TypeOf a
 
--- | > RowOf a == a :> TypeOf a
-type family RowOf a
-type instance RowOf a = a :> TypeOf a
+-- | > FieldOf a == a :> TypeOf a
+type family FieldOf a
+type instance FieldOf a = a :> TypeOf a
 
--- | Creates a row labelled by @a@
-rowOf :: TypeOf a -> RowOf a
-rowOf a = undefined .> a
+-- | Creates a field labelled by @a@
+fieldOf :: TypeOf a -> FieldOf a
+fieldOf a = undefined .> a
 
 -- | Same as @Knows lab (TypeOf lab) s@, Useful on writing type
 --   signitures.
