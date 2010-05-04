@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -fglasgow-exts #-}
+
 import qualified Data.Time as Time
 import qualified Data.Fixed as Fixed
 import qualified Data.List as List
@@ -64,7 +66,8 @@ todToSeconds time = (Hour ^. time) * (60*60)
 -- > fmap (showTime . tomorrow) getUTCTime
 -- > fmap (showTime . (`addHours` 10))    getZonedTime
 -- > fmap (showTime . (`addHours` (-10))) getUTCTime
--- > fmap (calcTod . getTod) getZonedTime
+-- > fmap (todToSeconds . getTod) getZonedTime
+-- > fmap  todToSeconds           getZonedTime
 
 -- Auxiliary Functions...
                 
@@ -73,9 +76,6 @@ getUTCTime = fmap fromUTCTime Time.getCurrentTime
 
 getZonedTime :: IO ZonedTime
 getZonedTime = fmap fromZonedTime Time.getZonedTime
-
-onDay :: (Integer -> Integer) -> (Time.Day -> Time.Day)
-onDay f = Time.ModifiedJulianDay . f . Time.toModifiedJulianDay
 
 epoch :: Integer
 epoch = Time.toModifiedJulianDay $ Time.fromGregorian 1970 1 1
