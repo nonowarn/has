@@ -35,7 +35,9 @@ type family a :&: b
 type instance a :&: b = a :++: b
 infixr 5 :&:
 
--- | Provides plient function. Holds @e == prj (inj e s)@ for all @s@ and @e@.
+-- | Provides injection and projection into type lists.
+--
+--   Holds @e == prj (inj e s)@ for all @s@ and @e@.
 class Contains e s where
     -- | Injects a value of type @e@ into @s@ if @s@ contains the type @e@.
     inj :: e -> s -> s
