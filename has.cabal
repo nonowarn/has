@@ -34,6 +34,15 @@ Library
   Other-modules:     Data.Has.Engine
                      Data.Has.TypeList
 
+  Extensions:        MultiParamTypeClasses
+                     TypeFamilies
+                     TypeOperators
+                     FunctionalDependencies
+                     FlexibleContexts
+                     FlexibleInstances
+                     MultiParamTypeClasses
+                     UndecidableInstances
+
 Flag test
   Description:       Build test program.
   Default:           False
@@ -47,6 +56,15 @@ Executable test
     Buildable:       False
   if flag(test)
     Build-depends:   HUnit, test-framework, test-framework-hunit
+
+  Extensions:        MultiParamTypeClasses
+                     TypeFamilies
+                     TypeOperators
+                     FunctionalDependencies
+                     FlexibleContexts
+                     FlexibleInstances
+                     MultiParamTypeClasses
+                     UndecidableInstances
 
 Source-repository head
   type:              git

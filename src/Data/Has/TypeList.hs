@@ -1,6 +1,3 @@
-{-# OPTIONS_GHC -fglasgow-exts #-}
-{-# LANGUAGE UndecidableInstances #-}
-
 -- | Provides type-list functionality
 
 module Data.Has.TypeList where

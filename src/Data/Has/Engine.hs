@@ -1,5 +1,4 @@
-{-# OPTIONS_GHC -fglasgow-exts #-}
-{-# LANGUAGE OverlappingInstances,UndecidableInstances #-}
+{-# LANGUAGE OverlappingInstances #-}
 
 module Data.Has.Engine where
 

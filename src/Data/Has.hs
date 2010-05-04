@@ -1,6 +1,3 @@
-{-# OPTIONS_GHC -fglasgow-exts #-}
-{-# LANGUAGE UndecidableInstances #-}
-
 -- |
 -- Module      :  Data.Has
 -- Copyright   :  HASHIMOTO, Yusaku 2010
