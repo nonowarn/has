@@ -94,7 +94,7 @@ can still access the field, and apply to generic functions.
 >                    -- We can omit parentheses
 >                    -- (even place parens anyware in record)
 
-< combinedRecord `fooIsGreaterThan` 40 -- This yet works
+< combinedRecord `fooIsGreaterThan` 40
 
 The Has constraint provides not only genericity but also safety. If
 the record doesn't satisfy the constraint, the type checker rejects
