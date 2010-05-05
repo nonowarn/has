@@ -17,6 +17,7 @@ Extra-source-files:  README.md
                      examples/DefaultParameter.hs
                      examples/Points.hs
                      examples/Time.hs
+                     examples/Announce04.lhs
 
 Library
   Hs-source-dirs:    src
