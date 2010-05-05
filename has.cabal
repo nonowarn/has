@@ -1,13 +1,7 @@
 Name:                has
 Version:             0.4.0.1
 Synopsis:            Entity based records
-Description:         Usage: <http://github.com/nonowarn/has/blob/master/README.md>
-                     .
-                     And its examples and test would be helpful:
-                     .
-                     * <http://github.com/nonowarn/has/tree/master/examples/>
-                     .
-                     * <http://github.com/nonowarn/has/blob/master/test/Main.hs>
+Description:         Typical usage is described at <http://github.com/nonowarn/has/blob/master/examples/Announce04.lhs>.
 Homepage:            http://github.com/nonowarn/has
 License:             BSD3
 License-file:        LICENSE
