@@ -1,5 +1,8 @@
+(This is a literate haskell style tutorial of the has library, based
+on the announce post to haskell-cafe)
+
 I'm pleased to announce the release of my new library, named "has",
-written to aim to ease pain at inconvinience of Haskell's build-in
+written to aim to ease pain at inconvinience of Haskell's built-in
 records.
 
 Repository is at GitHub: http://github.com/nonowarn/has
@@ -12,11 +15,15 @@ function, combine records with another.
 
 You can use the has in three steps (without counting installation).
 
-1. Write {-# OPTIONS_GHC -fglasgow-exts #-} top of your code,
+1. Write a pragma to enable some extensions at the top of your code,
    import Data.Has module.
 
 > {-# LANGUAGE TypeFamilies,TypeOperators,FlexibleContexts #-}
 > import Data.Has
+
+   If you are lazy, you may prefer
+
+< {-# OPTIONS_GHC -fglasgow-exts #-}
 
 2. Define entities. "Entity" is data to index field in records.
    You can define an entity in one line.
