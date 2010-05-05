@@ -1,7 +1,8 @@
 has
 ===
 
-This is a library which provides generic accessors for records.
+This is a library which provides entity based records for Haskell.
 
-Shiny tutorial should have been here, but you can learn how to use
-this `has` from files in `test/` and `examples/` of this repository.
+Please read it first: [Tutorial based on announce post][Ann].
+
+[Ann]: http://github.com/nonowarn/has/blob/master/examples/Announce04.lhs
