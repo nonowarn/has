@@ -7,28 +7,37 @@
 -- Stability   :  experimental
 -- Portability :  unknown
 --
--- Entiry based records.
+-- Entiry based records. To use this module, you have to write
+-- LANGUGAGE pragma
+--
+-- > {-# LANGUAGE TypeFamilies,TypeOperators,FlexibleContexts #-}
+--
+-- Or OPTIONS_GHC pragma if you are lazy.
+--
+-- > {-# OPTIONS_GHC -fglasgow-exts #-}
 
 module Data.Has
   (
-  -- * Has class
+  -- * Has constraint
     Has
 
-  -- * Rows in records
+  -- * Fields in Records
   , Field
-  , (&), (:&:), field
+  , field, fieldOf
 
   -- * Update and Lookup values from records
   , (^=), (^.), (^:)
+
+  -- * Knows == Generalized version of Has
   , Knows(..), updl
 
-  -- * Labelled values
+  -- ** Labelled Fields
   , Labelled(), (:>), (.>)
 
-  -- ** Defining labels
-  , TypeOf, FieldOf, fieldOf
+  -- * Defining Entities and Records
+  , TypeOf, FieldOf, (&), (:&:)
 
-  -- * Make parsing error messages easier
+  -- * Reading error messages easier
   , (:::)(), TyNil(), Contains()
   ) where
 
@@ -63,26 +72,33 @@ unlabel _ = unLabelled
 
 infix 6 .>
 
--- | Injects and Projects a labelled values into records.
-class (Contains (Labelled lab e) s) => Knows lab e s | lab s -> e where
-    -- | Injects a labelled value
-    injl :: lab -> e -> s -> s
-    -- | Projects a labelled value
-    prjl :: lab -> s -> e
+-- | Injects and projects a value of @v@  a corresponding field
+--   in records @a@ along entity @e@.
+--
+--   Holds @v == prjl e (injl e v r)@.
+class (Contains (Labelled e v) r) => Knows e v r | e r -> v where
+    -- | Injects a value @v@ into record @a@ along @e@.
+    injl :: e -> v -> r -> r
+    -- | Projects a value @v@ into record @a@ along @e@.
+    prjl :: e -> r -> v
 
-instance (Contains (Labelled lab e) s) => Knows lab e s where
-    injl lab e s = inj (label lab e) s
-    prjl lab s   = unlabel lab (prj s)
+instance (Contains (Labelled e v) r) => Knows e v r where
+    injl e v r = inj (label e v) r
+    prjl e r   = unlabel e (prj r)
 
--- | Updates a labelled value
-updl :: (Knows lab b a)
-     => lab -> (b -> b) -> (a -> a)
+-- | Updates a value of @v@ in a record @r@ using function of @v -> v@.
+updl :: (Knows e v r)
+     => e -> (v -> v) -> (r -> r)
 updl lab f a = let b = prjl lab a in injl lab (f b) a
 
--- | TypeOf @a@ should indicate a type labelled by @a@
+-- | @TypeOf a@ should indicate a type labelled by @a@. When defining
+--   entities, declare instance of this family. If you want @Foo@
+--   entity points to @Int@, you write
+--
+-- > data Foo = Foo; type instance TypeOf Foo = Int
 type family TypeOf a
 
--- | > FieldOf a == a :> TypeOf a
+-- | Field labelled with @a@, and contains @TypeOf a@.
 type family FieldOf a
 type instance FieldOf a = a :> TypeOf a
 
@@ -90,29 +106,33 @@ type instance FieldOf a = a :> TypeOf a
 fieldOf :: TypeOf a -> FieldOf a
 fieldOf a = undefined .> a
 
--- | Same as @Knows lab (TypeOf lab) s@, Useful on writing type
---   signitures.
+-- | Meaning of this constraint is \"This record @s@ has a field of
+--   entity @e@.\" Here, I use the word \"constraint\" for class which
+--   is useful on writing type signitures.
 --
---   Holds @e == (lab .^ (lab ^= e $ s))@
---   where @lab :: lab; e :: TypeOf lab; s :: s@
-class (Knows lab (TypeOf lab) s) => Has lab s
-instance (Knows lab (TypeOf lab) s) => Has lab s
+--   Holds @v == (e .^ (e ^= v $ s))@ where @e :: e; v ::
+--   TypeOf e; s :: s@ for all @e@ with @TypeOf e@ and @s@.
+--
+--   Same as @Knows e (TypeOf e) s@.
+class (Knows e (TypeOf e) r) => Has e r
+instance (Knows e (TypeOf e) r) => Has e r
 
--- | Strict version of 'injl'
-(^=) :: (Knows lab (TypeOf lab) s)
-     => lab -> TypeOf lab -> s -> s
+-- | Writes field of @e@ in @r@ with @TypeOf e@.
+(^=) :: (Knows e (TypeOf e) r)
+     => e -> TypeOf e -> r -> r
 (^=) = injl
 infix 6 ^=
 
--- | Strict version of 'prjl'
-(^.) :: (Knows lab (TypeOf lab) s)
-     => lab -> s -> TypeOf lab
+-- | Reads @TypeOf e@ from field of @e@ in @r@.
+(^.) :: (Knows e (TypeOf e) r)
+     => e -> r -> TypeOf e
 (^.) = prjl
 infix 4 ^.
 
--- | Strict version of 'updl'
-(^:) :: (Knows lab (TypeOf lab) s)
-     => lab -> (TypeOf lab -> TypeOf lab) -> (s -> s)
+-- | Modifies field of @e@ in @r@ with given function @TypeOf e ->
+-- | TypeOf e@.
+(^:) :: (Knows e (TypeOf e) r)
+     => e -> (TypeOf e -> TypeOf e) -> (r -> r)
 (^:) = updl
 infixr 5 ^:
 

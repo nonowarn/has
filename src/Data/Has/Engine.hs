@@ -6,6 +6,10 @@ import Data.Has.TypeList
 
 -- | @Field a@ is a type list which contains only one element of
 --   @a@. And every field in the records should be this type.
+--
+--   If you concatenate fields with @(:&:)@ at type-level, @(&)@ at
+--   value-level, it becomes a record can be manipulated by functions
+--   in this module.
 type Field a = a ::: TyNil
 
 -- | Creates a 'Field' of @a@.
