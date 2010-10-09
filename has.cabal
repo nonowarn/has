@@ -1,5 +1,5 @@
 Name:                has
-Version:             0.4.0.1
+Version:             0.4.1.0
 Synopsis:            Entity based records
 Description:         Typical usage is described at <http://github.com/nonowarn/has/blob/master/examples/Announce04.lhs>.
 Homepage:            http://github.com/nonowarn/has
@@ -37,6 +37,7 @@ Library
                      FlexibleInstances
                      MultiParamTypeClasses
                      UndecidableInstances
+                     DeriveDataTypeable
 
 Flag test
   Description:       Build test program.

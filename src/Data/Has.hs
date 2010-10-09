@@ -41,6 +41,7 @@ module Data.Has
   , (:::)(), TyNil(), Contains()
   ) where
 
+import Data.Data
 import Control.Applicative
 import Test.QuickCheck (Arbitrary(..), CoArbitrary(..))
 import Data.Monoid (Monoid (..))
@@ -52,7 +53,7 @@ import Data.Has.TypeList ((:::), TyNil)
 
 -- | Represents labelled value.
 newtype Labelled lab a = Label { unLabelled :: a }
-    deriving (Eq,Ord,Show,Read,Bounded)
+    deriving (Eq,Ord,Show,Read,Bounded,Typeable,Data)
 
 -- | Represents labelled field.
 type lab :> a = Field (Labelled lab a)
