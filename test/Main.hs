@@ -86,4 +86,7 @@ test_labelled_values =
     , eq "update a value by a label"
          (X .> "foofoo" & Y .> "bar" & Z .> "baz")
          (X ^: (++"foo") $ mkC "foo" "bar" "baz")
+    , eq "build data using operator (^-)"
+         (mkC "foo" "bar" "baz")
+         (X ^- "foo" & Y ^- "bar" & Z ^- "baz")
     ]
