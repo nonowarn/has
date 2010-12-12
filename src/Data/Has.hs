@@ -138,7 +138,7 @@ infix 4 ^.
 infixr 5 ^:
 
 -- | Creates field of @e@ with given value @TypeOf e@.
---   Stealed from Chris Drone's blog post: <http://chrisdone.com/posts/2010-11-22-duck-typing-in-haskell.html>
+--   Stealed from Chris Done's blog post: <http://chrisdone.com/posts/2010-11-22-duck-typing-in-haskell.html>
 (^-) :: e -> TypeOf e -> FieldOf e
 (^-) = const fieldOf
 infixr 6 ^-
