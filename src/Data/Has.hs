@@ -25,8 +25,8 @@ module Data.Has
   , Field
   , field, fieldOf
 
-  -- * Update and Lookup values from records
-  , (^=), (^.), (^:)
+  -- * Useful Operators
+  , (^=), (^.), (^:), (^-)
 
   -- * Knows == Generalized version of Has
   , Knows(..), updl
@@ -41,6 +41,7 @@ module Data.Has
   , (:::)(), TyNil(), Contains()
   ) where
 
+import Data.Data
 import Control.Applicative
 import Test.QuickCheck (Arbitrary(..), CoArbitrary(..))
 import Data.Monoid (Monoid (..))
@@ -52,7 +53,7 @@ import Data.Has.TypeList ((:::), TyNil)
 
 -- | Represents labelled value.
 newtype Labelled lab a = Label { unLabelled :: a }
-    deriving (Eq,Ord,Show,Read,Bounded)
+    deriving (Eq,Ord,Show,Read,Bounded,Typeable,Data)
 
 -- | Represents labelled field.
 type lab :> a = Field (Labelled lab a)
@@ -135,6 +136,12 @@ infix 4 ^.
      => e -> (TypeOf e -> TypeOf e) -> (r -> r)
 (^:) = updl
 infixr 5 ^:
+
+-- | Creates field of @e@ with given value @TypeOf e@.
+--   Stealed from Chris Drone's blog post: <http://chrisdone.com/posts/2010-11-22-duck-typing-in-haskell.html>
+(^-) :: e -> TypeOf e -> FieldOf e
+(^-) = const fieldOf
+infixr 6 ^-
 
 -- And misc instances
 instance (Monoid a) => Monoid (Labelled lab a) where

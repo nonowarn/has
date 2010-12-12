@@ -5,12 +5,14 @@ module Data.Has.TypeList where
 import Control.Applicative
 import Data.Monoid (Monoid (..))
 import Test.QuickCheck (Arbitrary (..), CoArbitrary (..))
+import Data.Typeable
+import Data.Data
 
 -- | Cons a type onto type-list.
-data a ::: b = a ::: b deriving (Show,Eq,Ord,Read,Bounded)
+data a ::: b = a ::: b deriving (Show,Eq,Ord,Read,Bounded,Typeable,Data)
 
 -- | The empty type-list.
-data TyNil = TyNil deriving (Read)
+data TyNil = TyNil deriving (Read,Typeable,Data)
 
 -- | Appends a type-list and another.
 class Append a b where
