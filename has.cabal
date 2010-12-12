@@ -1,5 +1,5 @@
 Name:                has
-Version:             0.5.0.0
+Version:             0.5.0.1
 Synopsis:            Entity based records
 Description:         Typical usage is described at <http://github.com/nonowarn/has/blob/master/examples/Announce04.lhs>.
 Homepage:            http://github.com/nonowarn/has
