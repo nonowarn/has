@@ -38,6 +38,7 @@ Library
                      MultiParamTypeClasses
                      UndecidableInstances
                      DeriveDataTypeable
+                     -- ConstraintKinds -- Cabal doesn't know this
 
 Flag test
   Description:       Build test program.

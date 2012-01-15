@@ -16,6 +16,8 @@
 --
 -- > {-# OPTIONS_GHC -fglasgow-exts #-}
 
+{-# LANGUAGE ConstraintKinds #-}
+
 module Data.Has
   (
   -- * Has constraint
@@ -115,24 +117,23 @@ fieldOf a = undefined .> a
 --   TypeOf e; s :: s@ for all @e@ with @TypeOf e@ and @s@.
 --
 --   Same as @Knows e (TypeOf e) s@.
-class (Knows e (TypeOf e) r) => Has e r
-instance (Knows e (TypeOf e) r) => Has e r
+type Has e r = (Knows e (TypeOf e) r)
 
 -- | Writes field of @e@ in @r@ with @TypeOf e@.
-(^=) :: (Knows e (TypeOf e) r)
+(^=) :: (Has e r)
      => e -> TypeOf e -> r -> r
 (^=) = injl
 infix 6 ^=
 
 -- | Reads @TypeOf e@ from field of @e@ in @r@.
-(^.) :: (Knows e (TypeOf e) r)
+(^.) :: (Has e r)
      => e -> r -> TypeOf e
 (^.) = prjl
 infix 4 ^.
 
 -- | Modifies field of @e@ in @r@ with given function @TypeOf e ->
 -- | TypeOf e@.
-(^:) :: (Knows e (TypeOf e) r)
+(^:) :: (Has e r)
      => e -> (TypeOf e -> TypeOf e) -> (r -> r)
 (^:) = updl
 infixr 5 ^:
