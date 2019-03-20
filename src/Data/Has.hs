@@ -77,7 +77,7 @@ infix 6 .>
 --   in records @a@ along entity @e@.
 --
 --   Holds @v == prjl e (injl e v r)@.
-class (Contains (Labelled e v) r) => Knows e v r | e r -> v where
+class (Contains (Labelled e v) r) => Knows e v r where
     -- | Injects a value @v@ into record @a@ along @e@.
     injl :: e -> v -> r -> r
     -- | Projects a value @v@ into record @a@ along @e@.
@@ -144,9 +144,11 @@ infixr 5 ^:
 infixr 6 ^-
 
 -- And misc instances
+instance (Semigroup a) => Semigroup (Labelled lab a) where
+    a <> b = Label (unLabelled a <> unLabelled b)
+
 instance (Monoid a) => Monoid (Labelled lab a) where
     mempty = Label mempty
-    mappend a b = Label (unLabelled a `mappend` unLabelled b)
 
 instance (Arbitrary a) => Arbitrary (Labelled lab a) where
     arbitrary = Label <$> arbitrary
