@@ -1,13 +1,13 @@
 Name:                has
-Version:             0.5.0.1
+Version:             0.6.0.1
 Synopsis:            Entity based records
 Description:         Typical usage is described at <http://github.com/nonowarn/has/blob/master/examples/Announce04.lhs>.
 Homepage:            http://github.com/nonowarn/has
 License:             BSD3
 License-file:        LICENSE
-Author:              Yusaku Hashimoto
+Author:              Yusaku Hashimoto, Adam Krupicka
 Maintainer:          Yusaku Hashimoto <nonowarn@gmail.com>
-Copyright:           (c) Yusaku Hashimoto 2010
+Copyright:           (c) Yusaku Hashimoto 2019
 Stability:           Experimental
 Category:            Data
 Build-type:          Custom
