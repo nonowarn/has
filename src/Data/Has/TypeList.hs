@@ -10,6 +10,7 @@ import Data.Data
 
 -- | Cons a type onto type-list.
 data a ::: b = a ::: b deriving (Show,Eq,Ord,Read,Bounded,Typeable,Data)
+infixr 5 :::
 
 -- | The empty type-list.
 data TyNil = TyNil deriving (Read,Typeable,Data)
@@ -32,15 +33,17 @@ instance (Append y b) => Append (x ::: y) b where
 
 -- Useful Instances
 
+instance (Semigroup a, Semigroup b) => Semigroup (a ::: b) where
+    ~(a ::: b) <> ~(a' ::: b') = a <> a' ::: b <> b'
 instance (Monoid a, Monoid b) => Monoid (a ::: b) where
     mempty = mempty ::: mempty
-    mappend ~(a ::: b) ~(a' ::: b') = mappend a a' ::: mappend b b'
 instance (Arbitrary a, Arbitrary b) => Arbitrary (a ::: b) where
     arbitrary = liftA2 (:::) arbitrary arbitrary
 instance (CoArbitrary a, CoArbitrary b) => CoArbitrary (a ::: b) where
     coarbitrary ~(a ::: b) = coarbitrary a . coarbitrary b
 
-instance Monoid TyNil where mempty = TyNil; mappend = const (const TyNil)
+instance Semigroup TyNil where (<>) = const (const TyNil)
+instance Monoid TyNil where mempty = TyNil;
 instance Arbitrary TyNil where arbitrary = return TyNil
 instance CoArbitrary TyNil where coarbitrary _ = coarbitrary ()
 
