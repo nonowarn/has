@@ -39,20 +39,12 @@ Library
                      UndecidableInstances
                      DeriveDataTypeable
 
-Flag test
-  Description:       Build test program.
-  Default:           False
-
-Executable test
+test-suite has-test
+  type: exitcode-stdio-1.0
   Hs-source-dirs:    src, test
   Ghc-options:       -Wall
   Main-is:           Main.hs
-
-  if !flag(test)
-    Buildable:       False
-  if flag(test)
-    Build-depends:   HUnit, test-framework, test-framework-hunit
-
+  Build-depends:     HUnit, test-framework, test-framework-hunit
   Extensions:        MultiParamTypeClasses
                      TypeFamilies
                      TypeOperators
