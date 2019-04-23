@@ -42,7 +42,6 @@ module Data.Has
   ) where
 
 import Data.Data
-import Control.Applicative
 import Test.QuickCheck (Arbitrary(..), CoArbitrary(..))
 import Data.Monoid (Monoid (..))
 

@@ -1,5 +1,3 @@
-{-# LANGUAGE OverlappingInstances #-}
-
 module Data.Has.Engine where
 
 import Data.Has.TypeList
@@ -47,10 +45,10 @@ class Contains e s where
     -- | Projects a value of type @e@ out from @s@ if @s@ contains the type @e@.
     prj :: s -> e
 
-instance Contains e (e ::: r) where
+instance {-# OVERLAPPING #-} Contains e (e ::: r) where
     inj e ~(_  ::: r) = e ::: r
     prj   ~(e' ::: _) = e'
-instance Contains e r => Contains e (h ::: r) where
+instance {-# OVERLAPPING #-} Contains e r => Contains e (h ::: r) where
     inj e ~(h ::: r) = h ::: inj e r
     prj   ~(_ ::: r) = prj r
 

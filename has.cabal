@@ -54,6 +54,9 @@ test-suite has-test
                      MultiParamTypeClasses
                      UndecidableInstances
                      DeriveDataTypeable
+  Other-modules:     Data.Has
+                     Data.Has.Engine
+                     Data.Has.TypeList
 
 Source-repository head
   type:              git

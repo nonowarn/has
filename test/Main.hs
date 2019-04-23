@@ -1,18 +1,18 @@
-{-# OPTIONS_GHC -fglasgow-exts #-}
-
-import Test.HUnit
-import Test.Framework
-import Test.Framework.Providers.HUnit
+import Test.HUnit (assertEqual)
+import Test.Framework (Test, defaultMain, testGroup)
+import Test.Framework.Providers.HUnit (testCase)
 
 import Data.Has
 import Data.Has.Engine
 
+main :: IO ()
 main = defaultMain
        [ testGroup "Typical Usage" test_typical_usage
        , testGroup "Corner Cases"  test_corner_cases
        , testGroup "Labelled Values" test_labelled_values
        ]
 
+eq :: (Eq a, Show a) => String -> a -> a -> Test
 eq test_name expected actual =
     testCase test_name $ assertEqual test_name expected actual
 
@@ -23,6 +23,7 @@ newtype R = R Int deriving (Eq,Show)
 pqr :: Int -> Int -> Int -> Field P :&: Field Q :&: Field R
 pqr p q r = field (P p) & field (Q q) & field (R r)
 
+test_typical_usage :: [Test]
 test_typical_usage =
     [ eq "Project by Type" (Q 2) (prj (pqr 1 2 3))
     , eq "Inject by Type"
@@ -49,6 +50,7 @@ test_typical_usage =
 
 data L = L; data M = M; data N = N
 
+test_corner_cases :: [Test]
 test_corner_cases =
     [ testGroup "If there are same types in a type list"
       [ eq "left-most data wins in injection"
@@ -76,6 +78,7 @@ type C = FieldOf X :&: FieldOf Y :&: FieldOf Z
 mkC :: String -> String -> String -> C
 mkC x y z = fieldOf x & fieldOf y & fieldOf z
 
+test_labelled_values :: [Test]
 test_labelled_values =
     [ eq "inject a value by a label"
          (mkC "foo" "bar" "baz")
